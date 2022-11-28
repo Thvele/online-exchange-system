@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Товар</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'">
+
+    <div th:insert="fragments/header :: header"></div>
+
+    <div class="cover-container p-3 flex-column">
+        <div class="row">
+            <div class="col s12" th:each="element: ${goods}">
+                <span class="relative text-white text-xl font-bold" th:text="${goods.type.getTypeName()}"></span>
+                <div class="card bg-black bg-opacity-50 darken-1" style="height: 83vh" >
+                    <div class="card-content white-text" style="height: 90%">
+                        <div class="card h-48 w-48">
+                            <div class="card-image">
+                                <a th:href="'/api/users/' +${goods.getSeller().getIdUser()}"><img th:src="${goods.seller.getProfilePhoto()}" style="width: 200px; height: 180px"></a>
+                                <a class="card-title bg-black bg-opacity-80 flex-auto rounded-tr-lg" style="padding: 0 5px 0 2px !important;margin-bottom: 0 !important;" th:text="${goods.seller.getLogin()}" th:href="'/api/users/' +${goods.getSeller().getIdUser()}"></a>
+                            </div>
+                        </div>
+                        <span class="card-title" th:text="${goods.goodsName}"></span>
+                        <p class="font-bold text-2xl">Описание: </p>
+                        <p th:text="${goods.goodsDesc}"></p>
+                    </div>
+                    <div class="card-action" style="height: 10%">
+                        <span disabled th:text="'Цена: ' + ${goods.goodsCost} + '₽'" class="text-white mr-3 text-xl"></span>
+                        <a class="btn-large w-auto bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black" href="#"><i class="large material-icons">payments</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

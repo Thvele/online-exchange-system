@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <style>
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+    </style>
+</head>
+
+<div th:insert="fragments/header :: header"></div>
+
+<body class="bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'">
+    <div class="cover-container p-3 flex-column">
+
+        <div class="bg-black opacity-50 text-white rounded-xl">
+            <table class="table-auto">
+                <caption>
+                    <div class="row">
+                        <div class="input-field col s10">
+                            <input class="input-search" id="input-search" type="text">
+                            <label for="input-search">Поиск</label>
+                        </div>
+                        <div class="input-field col s2">
+                            <select>
+                                <option value="">Тип товара</option>
+                                <option value="acc">Аккаунт</option>
+                                <option value="thing">Предмет</option>
+                            </select>
+                        </div>
+                    </div>
+                </caption>
+                <thead>
+                    <tr>
+                        <th >Тип</th>
+                        <th >Описание</th>
+                        <th >Продавец</th>
+                        <th style="min-width: 110px">Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <div th:each="goods: ${goodsList}">
+                        <a href="#">
+                            <div>
+                                <tr>
+                                    <td><a class="font-bold" th:href="'item/' + ${goods.getIdGoods()}" th:text="${goods.getType().getTypeName()}"></a></td>
+                                    <td><a class="hover:underline" th:href="'item/' + ${goods.getIdGoods()}" th:text="${goods.getGoodsName()}"></a></td>
+                                    <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}" th:href="'api/users/' +${goods.getSeller().getIdUser()}"></a></td>
+                                    <td th:text="${goods.getGoodsCost()} + '₽'"></td>
+                                </tr>
+                            </div>
+                        </a>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('select');
+            M.FormSelect.init(elems);
+        });
+    </script>
+</body>
+</html>
