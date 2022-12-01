@@ -21,9 +21,9 @@ public class GoodsListController {
     public List<GoodsList> getAllGoods() { return goodsListService.getAllGoods(); }
 
     @PostMapping("/goods")
-    public GoodsList saveGoods(@RequestBody GoodsList goodsList){
+    public GoodsList saveGoods(@RequestBody GoodsList goodsList, @RequestParam("sID") Long sID){
 
-        return goodsListService.saveGoods(goodsList);
+        return goodsListService.saveGoods(goodsList, sID);
     }
 
     @GetMapping("/goods/{id}")
@@ -42,7 +42,7 @@ public class GoodsListController {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/goods/{id}")
+    @PostMapping("/goods/{id}")
     public ResponseEntity<GoodsList> updateGoods(@PathVariable("id") Long id,
                                                  @RequestBody GoodsList goods) {
 

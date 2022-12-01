@@ -1,6 +1,7 @@
 package com.funpaycopy.oes.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -14,7 +15,7 @@ public class RequestStatus {
     @Id
     private String requestStatus;
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"requestStatus"})
     @OneToMany(mappedBy = "requestStatus", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<RequestStatus> requests;

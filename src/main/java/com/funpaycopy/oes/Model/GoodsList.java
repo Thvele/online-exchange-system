@@ -1,5 +1,6 @@
 package com.funpaycopy.oes.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -31,14 +32,14 @@ public class GoodsList {
     @DecimalMin(value = "0.00")
     private BigDecimal goodsCost;
 
-    @JsonManagedReference
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties(value = {"goods"})
     private GoodsType type;
 
-    @JsonManagedReference
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties(value = {"goods"})
     private User seller;
 
     public GoodsList() {

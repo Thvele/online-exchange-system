@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'">
+
+<div th:insert="fragments/header :: header"></div>
+
+<div class="cover-container p-3 flex-column">
+    <div class="row">
+        <div class="col s12">
+            <span class="relative text-white text-xl font-bold"></span>
+            <div class="card bg-black bg-opacity-50 darken-1" style="height: 83vh" >
+                <div class="card-content white-text" style="height: 90%">
+                    <div class="flex flex-row">
+                        <div class="card h-48 w-48">
+                            <div class="card-image">
+                                <img src="https://i.pinimg.com/236x/21/22/4f/21224f5b94f58a281a4432240dc5666d.jpg" style="width: 200px; height: 180px">
+                            </div>
+                        </div>
+                        <div class="p-3 pl-0">
+                            <span class="bg-black bg-opacity-80 flex-auto rounded-tr-lg text-3xl ml-5 font-bold">ammo_tesla</span>
+                        </div>
+                    </div>
+                    <span class="card-title">шлфващшываавышз</span>
+                    <p class="font-bold text-2xl">Описание: </p>
+                    <p>Опинавыапшщ</p>
+                </div>
+                <div class="card-action" style="height: 10%">
+                    <span disabled class="text-white mr-3 text-xl"></span>
+                    <a class="btn-large w-auto bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black" href="#"><i class="large material-icons">payments</i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

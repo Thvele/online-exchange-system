@@ -1,6 +1,7 @@
 package com.funpaycopy.oes.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,9 +18,9 @@ public class RequestMRG {
     @Size(max = 1500)
     private String requestMRGDesc;
 
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"requestMRGCollection"})
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User user;
 
     public RequestMRG() {

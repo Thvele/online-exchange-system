@@ -2,6 +2,7 @@ package com.funpaycopy.oes.Service.Goods;
 
 import com.funpaycopy.oes.Model.GoodsList;
 import com.funpaycopy.oes.Repository.GoodsListRepository;
+import com.funpaycopy.oes.Repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +12,11 @@ import java.util.List;
 public class GoodsListServiceImpl implements GoodsListService{
 
     private final GoodsListRepository goodsListRepository;
+    private final UserRepository userRepository;
 
-    public GoodsListServiceImpl(GoodsListRepository goodsListRepository) { this.goodsListRepository = goodsListRepository; }
+    public GoodsListServiceImpl(GoodsListRepository goodsListRepository, UserRepository userRepository) { this.goodsListRepository = goodsListRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<GoodsList> getAllGoods() {
@@ -21,10 +25,11 @@ public class GoodsListServiceImpl implements GoodsListService{
     }
 
     @Override
-    public GoodsList saveGoods(GoodsList goodsList) {
+    public GoodsList saveGoods(GoodsList goodsList, Long sID) {
 
         GoodsList goodsList_ = new GoodsList();
         BeanUtils.copyProperties(goodsList, goodsList_);
+        goodsList_.setSeller(userRepository.findById(sID).orElseThrow());
         goodsListRepository.save(goodsList_);
         return goodsList;
     }

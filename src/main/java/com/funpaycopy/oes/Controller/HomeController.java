@@ -33,4 +33,10 @@ public class HomeController {
         return ("item");
     }
 
+    @GetMapping("/profile/{id}")
+    public String profile(Model model, @PathVariable("id") Long id) {
+
+        return ("profile");
+    }
+
 }

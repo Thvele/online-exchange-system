@@ -64,7 +64,7 @@
                                 <tr>
                                     <td><a class="font-bold" th:href="'item/' + ${goods.getIdGoods()}" th:text="${goods.getType().getTypeName()}"></a></td>
                                     <td><a class="hover:underline" th:href="'item/' + ${goods.getIdGoods()}" th:text="${goods.getGoodsName()}"></a></td>
-                                    <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}" th:href="'api/users/' +${goods.getSeller().getIdUser()}"></a></td>
+                                    <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}" th:href="'profile/' +${goods.getSeller().getIdUser()}"></a></td>
                                     <td th:text="${goods.getGoodsCost()} + '₽'"></td>
                                 </tr>
                             </div>

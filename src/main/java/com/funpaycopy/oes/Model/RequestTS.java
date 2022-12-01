@@ -1,6 +1,7 @@
 package com.funpaycopy.oes.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -19,19 +20,19 @@ public class RequestTS {
     @Size(max = 1500)
     private String requestDesc;
 
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"requests"})
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private RequestStatus requestStatus;
 
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"requestTSCollection"})
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User employee;
 
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"requestTS"})
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private BuyList buy;
 
     public RequestTS() {

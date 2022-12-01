@@ -1,6 +1,7 @@
 package com.funpaycopy.oes.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -48,22 +49,22 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"seller"})
     @OneToMany(mappedBy = "seller", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<GoodsList> goods;
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"buyer"})
     @OneToMany(mappedBy = "buyer", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<BuyList> buys;
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"employee"})
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<RequestTS> requestTSCollection;
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"user"})
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private Collection<RequestMRG> requestMRGCollection;
@@ -84,7 +85,6 @@ public class User {
         this.requestTSCollection = requestTSCollection;
         this.requestMRGCollection = requestMRGCollection;
     }
-
 
     public long getIdUser() {
         return idUser;

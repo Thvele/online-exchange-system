@@ -2,6 +2,7 @@ package com.funpaycopy.oes.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,17 +21,17 @@ public class BuyList {
     @JoinColumn(name = "goods")
     private GoodsList goods;
 
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"buys"})
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User buyer;
 
-    @JsonBackReference
+    @JsonIgnoreProperties(value = {"buys"})
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private BuyStatus status;
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"buy"})
     @OneToMany(mappedBy = "buy", fetch = FetchType.EAGER)
     private Collection<RequestTS> requestTS;
 
