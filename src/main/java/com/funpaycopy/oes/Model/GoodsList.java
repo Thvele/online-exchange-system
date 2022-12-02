@@ -1,7 +1,6 @@
 package com.funpaycopy.oes.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -42,16 +41,20 @@ public class GoodsList {
     @JsonIgnoreProperties(value = {"goods"})
     private User seller;
 
+    @NotNull
+    private Boolean selled;
+
     public GoodsList() {
     }
 
-    public GoodsList(String goodsName, String goodsDesc, String goodsDetails, BigDecimal goodsCost, GoodsType type, User seller) {
+    public GoodsList(String goodsName, String goodsDesc, String goodsDetails, BigDecimal goodsCost, GoodsType type, User seller, Boolean selled) {
         this.goodsName = goodsName;
         this.goodsDesc = goodsDesc;
         this.goodsDetails = goodsDetails;
         this.goodsCost = goodsCost;
         this.type = type;
         this.seller = seller;
+        this.selled = selled;
     }
 
     public long getIdGoods() {
@@ -108,5 +111,13 @@ public class GoodsList {
 
     public void setSeller(User seller) {
         this.seller = seller;
+    }
+
+    public Boolean getSelled() {
+        return selled;
+    }
+
+    public void setSelled(Boolean selled) {
+        this.selled = selled;
     }
 }
