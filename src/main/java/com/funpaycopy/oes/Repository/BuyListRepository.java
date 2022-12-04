@@ -8,4 +8,7 @@ import java.util.List;
 public interface BuyListRepository extends JpaRepository<BuyList, Long> {
 
     List<BuyList> findAllByGoodsSellerIdUser(Long id);
+
+    List<BuyList> findAllByGoodsSellerIdUserAndGoodsTypeTypeName(Long id, String name);
+    List<BuyList> findAllByBuyerIdUserAndGoodsTypeTypeName(Long id, String name);
 }

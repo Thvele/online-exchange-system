@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/css/materialize/css/materialize.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradient 5s ease infinite;
+            height: 100vh;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+    </style>
+</head>
+<body class="text-bg-dark min-h-screen" style="font-family: 'Century Gothic'">
+
+<div th:insert="fragments/header :: header"></div>
+
+<div class="w-full my-auto bg-opacity-50 px-5 py-20 bg-neutral-900 block center" style="margin-top: 15vh">
+    <div class="max-w-xs mx-auto">
+        <header>
+            <img class="w-20 mx-auto mb-5" src="https://i.imgur.com/ILxHPXF.png" />
+        </header>
+        <form th:object="${user}" method="post">
+            <div class="text-center">
+                <span class="text-red-500" th:text="${exception}"></span>
+            </div>
+            <div class="input-field">
+                <input th:field="*{login}" class="text-white" type="text" placeholder="Логин" required th:value="*{login}">
+            </div>
+            <div class="mb-6 text-xs text-red-600" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
+            <div class="mb-6 input-field">
+                <input th:field="*{email}" class="text-white" type="email" placeholder="Почта" th:value="*{email}">
+            </div>
+            <div class="input-field">
+                <div class="flex relative">
+                    <a id="p-sh" class="prefix text-center" href="#"><i id="p-i" class="material-icons text-white">visibility</i></a>
+                    <input id="input-p" name="password" th:field="*{password}" class="text-white" type="password" placeholder="Пароль" required th:value="*{password}">
+                </div>
+            </div>
+            <div class="text-xs text-red-600 mb-8" th:if="${#fields.hasErrors('password')}"><span class="whitespace-pre-wrap" th:errors="*{password}" ></span></div>
+            <div>
+                <button class="w-full py-2 px-4 mb-6 rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white" type="submit">Зарегистрироваться</button>
+            </div>
+        </form>
+        <footer>
+            <a class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white p-2 rounded text-sm float-left" href="/login">Назад</a>
+        </footer>
+    </div>
+</div>
+
+<script>
+    var el = document.getElementById('p-sh'),
+        icon = document.getElementById('p-i'),
+        input = document.getElementById('input-p');
+
+    var userAgent = window.navigator.userAgent,
+        platform = window.navigator.platform,
+        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+        os = null;
+
+    if (macosPlatforms.indexOf(platform) !== -1) {
+        PCpass();
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+        Ppass();
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        PCpass();
+    } else if (/Android/.test(userAgent)) {
+        Ppass();
+    } else if (!os && /Linux/.test(platform)) {
+        PCpass();
+    }
+
+    function PCpass() {
+
+        el.addEventListener('mousedown', e => {
+
+            input.type = "text";
+            icon.innerText = "visibility_off";
+        });
+
+        el.addEventListener('mouseup', e => {
+
+            input.type = "password";
+            icon.innerText = "visibility";
+        });
+    }
+
+    function Ppass() {
+
+        el.addEventListener('click', e => {
+            if(input.type == "password"){
+
+                input.type = "text";
+                icon.innerText = "visibility_off";
+            } else {
+
+                input.type = "password";
+                icon.innerText = "visibility";
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

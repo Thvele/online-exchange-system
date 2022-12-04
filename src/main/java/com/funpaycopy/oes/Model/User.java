@@ -31,15 +31,13 @@ public class User {
     @Email(message = "Невалидная почта")
     private String email;
 
-    @NotNull
+
     @Digits(integer = 6, fraction = 2)
     @DecimalMin(value = "0.00")
     private BigDecimal balance;
 
-    @NotNull
     private Boolean active;
 
-    @NotNull
     @Size(max = 1200)
     private String profilePhoto;
 

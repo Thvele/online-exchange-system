@@ -1,10 +1,12 @@
 <div th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <header>
+    <header style="font-family: 'Century Gothic';">
+
         <div class="p-3 border-gray-200 px-6 py-2.5" style="background: #040204">
             <div class="flex flex-wrap justify-between items-center mx-auto">
                 <a href="/" class="flex items-center">
-                    <img src="https://i.imgur.com/4drIRvQ.gif" class="mr-3 h-6 mt-3" alt="Flowbite Logo" />
-                    <span class="self-center text-xl font-semibold whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-cyan-500 to-white">FunPay</span>
+                    <img src="https://i.imgur.com/ILxHPXF.png" class="mr-5" style="width: 50px; height: 50px"
+                         alt="logo"/>
+                    <span id="sys-name" class="self-center text-3xl font-bold whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-[#f64f59] via-[#6b6b83] to-[#aa4b6b]">OES</span>
                 </a>
 
                 <div class="justify-between items-center flex-auto w-auto mx-16">
@@ -13,18 +15,80 @@
                             <a href="/" class="block px-2 text-gray-400 hover:text-white">Главная</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-2 text-gray-400 hover:text-white">Поддержка</a>
+                            <a href="#" class="block px-2 text-gray-400 hover:text-white" sec:authorize="isAuthenticated()">Поддержка</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-2 text-gray-400 hover:text-white">Повышение прав</a>
+                            <a href="#" class="block px-2 text-gray-400 hover:text-white" sec:authorize="isAuthenticated()">Повышение прав</a>
                         </li>
                     </ul>
                 </div>
 
                 <div class="flex items-center order-2">
-                    <a class="waves-effect waves-purple btn-small bg-white text-black hover:bg-purple-600 hover:text-white border-solid border-0 border-b-4 border-purple-600 focus:bg-purple-600 focus:text-white">Войти</a>
+                    <div sec:authorize="isAuthenticated()">
+
+                        <a id="userN"
+                           class="dropdown-trigger btn-large bg-transparent hover:bg-neutral-700 hover:bg-opacity-50 font-bold"
+                           data-target='dropdown1'></a>
+
+                        <ul id='dropdown1' class='dropdown-content'>
+                            <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
+                                   style="color: white !important; font-size: 0.9rem !important;"
+                                   href="/profile">Профиль</a></li>
+                            <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
+                                   style="color: white !important; font-size: 0.9rem !important;"
+                                   href="/profileEDT">Настройки профиля</a></li>
+                            <li class="divider bg-neutral-800" tabindex="-1"></li>
+                            <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
+                                   style="color: white !important; font-size: 0.9rem !important;"
+                                   id="userB" href="#!"></a></li>
+                            <li class="divider bg-neutral-800" tabindex="-1"></li>
+                            <li style="height: 1% !important;">
+                                <form action="/logout" method="post" class="h-full">
+                                    <button type="submit"
+                                       class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 w-full h-full text-start"
+                                       style="color: white !important; font-size: 0.9rem !important; padding-left: 1.15rem">Выйти</button>
+                                </form>
+                            </li>
+                        </ul>
+
+                        <img id="userI" class="right mr-5 rounded-sm" src="https://i.imgur.com/ILxHPXF.png"
+                             style="width: 54px; height: 54px" alt="icon"/>
+                    </div>
+                    <a sec:authorize="isAnonymous()"
+                       class="waves-effect waves-light btn-small text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white"
+                       href="/login">Войти</a>
                 </div>
             </div>
         </div>
+
+        <script src="/css/materialize/js/materialize.min.js"></script>
+
+        <script>
+            $('.dropdown-trigger').dropdown();
+
+            var a = document.getElementById('ac');
+
+            function getCookie(c_name) {
+                if (document.cookie.length > 0) {
+                    c_start = document.cookie.indexOf(c_name + "=");
+                    if (c_start != -1) {
+                        c_start = c_start + c_name.length + 1;
+                        c_end = document.cookie.indexOf(";", c_start);
+                        if (c_end == -1) {
+                            c_end = document.cookie.length;
+                        }
+                        return unescape(document.cookie.substring(c_start, c_end));
+                    }
+                }
+                return "";
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+
+                document.getElementById('userN').innerHTML = getCookie('uN');
+                document.getElementById('userB').innerHTML = 'Баланс: ' + getCookie('uB');
+                document.getElementById('userI').src = getCookie('uP');
+            });
+        </script>
     </header>
 </div>

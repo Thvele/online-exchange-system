@@ -5,8 +5,9 @@
     <title>Главная</title>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/css/materialize/css/materialize.min.css" rel="stylesheet">
+    <script src="/css/materialize/js/materialize.min.js"></script>
+    <link href="/css/style.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
     <style>
@@ -30,58 +31,82 @@
 <div th:insert="fragments/header :: header"></div>
 
 <body class="bg-neutral-900 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
-    <div class="cover-container p-3 flex-column">
+<div class="cover-container p-3 flex-column">
 
-        <div class="bg-black opacity-50 text-white rounded-xl">
-            <table class="table-auto">
-                <caption>
-                    <div class="row">
-                        <div class="input-field col s10">
-                            <input class="input-search" id="input-search" type="text">
+    <div class="bg-black bg-opacity-50 text-white rounded-xl">
+        <table class="table-auto">
+            <caption>
+                <div class="row">
+                    <form action="/search">
+                        <div class="input-field col s9">
+                            <input class="input-search" name="search" id="input-search" type="text"
+                                   th:value="${search}">
                             <label for="input-search">Поиск</label>
                         </div>
-                        <div class="input-field col s2">
-                            <select>
-                                <option value="">Тип товара</option>
-                                <option value="acc">Аккаунт</option>
-                                <option value="thing">Предмет</option>
-                            </select>
-                        </div>
-                    </div>
-                </caption>
-                <thead>
-                    <tr>
-                        <th >Тип</th>
-                        <th >Описание</th>
-                        <th >Продавец</th>
-                        <th style="min-width: 110px">Цена</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <div th:each="goods: ${goodsList}">
-                        <a href="#">
-                            <div>
-                                <tr>
-                                    <td><a class="font-bold" th:href="'item/' + ${goods.getIdGoods()}" th:text="${goods.getType().getTypeName()}"></a></td>
-                                    <td><a class="hover:underline" th:href="'item/' + ${goods.getIdGoods()}" th:text="${goods.getGoodsName()}"></a></td>
-                                    <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}" th:href="'profile/' +${goods.getSeller().getIdUser()}"></a></td>
-                                    <td th:text="${goods.getGoodsCost()} + '₽'"></td>
-                                </tr>
+                        <div class="input-field col s3">
+                            <div class="flex">
+                                <div class="col s10 w-full">
+                                    <select name="type" class="w-full">
+                                        <option value="">Тип товара</option>
+                                        <option value="Аккаунт" th:selected="(${type} == 'Аккаунт')">Аккаунт</option>
+                                        <option value="Предмет" th:selected="(${type} == 'Предмет')">Предмет</option>
+                                        <option value="Прочее" th:selected="(${type} == 'Прочее')">Прочее</option>
+                                    </select>
+                                </div>
+                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s2" type="submit">Поиск</button>
                             </div>
-                        </a>
-                    </div>
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </form>
+                </div>
+            </caption>
+            <thead th:if="${not goodsList.isEmpty()}">
+            <tr>
+                <th>Тип</th>
+                <th>Описание</th>
+                <th>Продавец</th>
+                <th style="min-width: 110px">Цена</th>
+            </tr>
+            </thead>
 
+            <tbody th:if="${not goodsList.isEmpty()}">
+            <div th:each="goods: ${goodsList}">
+                <a href="#">
+                    <div>
+                        <tr class="opacity-50 hover:opacity-100">
+                            <td><a class="font-bold h-full w-full" th:href="'item/' + ${goods.getIdGoods()}"
+                                   th:text="${goods.getType().getTypeName()}"></a></td>
+
+                            <td><a class="hover:underline" th:href="'item/' + ${goods.getIdGoods()}"
+                                   th:text="${goods.getGoodsName()}"></a></td>
+
+                            <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}"
+                                   th:href="'profile/' +${goods.getSeller().getIdUser()}"></a></td>
+
+                            <td th:text="${goods.getGoodsCost()} + '₽'"></td>
+                        </tr>
+                    </div>
+                </a>
+            </div>
+            </tbody>
+
+            <tbody th:if="${goodsList.isEmpty()}">
+            <tr>
+                <td colspan="4" class="text-center font-bold text-3xl">Ничего не найдено!</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var elems = document.querySelectorAll('select');
-            M.FormSelect.init(elems);
-        });
-    </script>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems);
+    });
+
+
+</script>
 </body>
 </html>

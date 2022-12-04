@@ -5,34 +5,135 @@
     <title>Авторизация</title>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/css/materialize/css/materialize.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
-</head>
-<body class="bg-neut text-bg-dark min-h-screen flex" style="font-family: 'Century Gothic'; background: rgb(23, 23, 23)">
+    <style>
+        body {
+            background: linear-gradient(-45deg,  #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradient 5s ease infinite;
+            height: 100vh;
+        }
 
-<div class="w-full max-w-xs m-auto bg-opacity-30 rounded p-5" style="background-image: url('https://i.pinimg.com/originals/6f/ff/a3/6fffa37dc74b93131ab82ac94b931af7.gif')">
-    <header>
-        <img class="w-20 mx-auto mb-5" src="https://i.imgur.com/ILxHPXF.png" />
-    </header>
-    <form>
-        <div class="mb-6">
-            <label class="block mb-2 text-purple-500" for="username"></label>
-            <input class="w-full p-2 mb-6 text-black border-b-2 border-black outline-none focus:bg-gray-300" type="text" name="username" placeholder="Username">
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-neut text-bg-dark min-h-screen" style="font-family: 'Century Gothic'">
+
+<div th:insert="fragments/header :: header"></div>
+
+<div class="block center" style="margin-top: 15vh">
+    <div class="w-full my-auto bg-opacity-50 px-5 py-20 bg-neutral-900">
+        <div class="max-w-xs mx-auto">
+            <header>
+                <img class="w-20 mx-auto mb-5" src="https://i.imgur.com/ILxHPXF.png" />
+            </header>
+            <form th:action="@{/login}" method="post">
+                <div class="text-center">
+                    <span class="text-red-500" th:if="${param.error}">Неверное имя пользователя/пароль!</span>
+                </div>
+                <div class="input-field mb-6">
+                    <input name="username" class="text-white" type="text" placeholder="Логин" required th:value="${login}">
+                </div>
+                <div class="input-field mb-8">
+                    <div class="flex relative">
+                        <a id="p-sh" class="prefix text-center" href="#"><i id="p-i" class="material-icons text-white">visibility</i></a>
+                        <input id="input-p" name="password" class="text-white" type="password" placeholder="Пароль" required autocomplete="off">
+                    </div>
+                </div>
+                <div>
+                    <button class="w-full py-2 px-4 mb-6 rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white" type="submit">Авторизоваться</button>
+                </div>
+            </form>
+            <footer>
+                <a class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white p-2 rounded text-sm float-right" href="/reg">Зарегестрироваться</a>
+            </footer>
         </div>
-        <div class="mb-12">
-            <label class="block mb-2 text-purple-500" for="password"></label>
-            <input class="w-full p-2 mb-6 text-black border-b-2 border-black outline-none focus:bg-gray-300" type="password" name="password" placeholder="Password">
-        </div>
-        <div>
-            <input class="w-full text-black cursor-pointer bg-sky-500 font-bold py-2 px-4 mb-6 rounded" type="submit">
-        </div>
-    </form>
-    <footer>
-        <a class="text-black bg-white hover:underline p-2 rounded rounded-sm text-sm float-right" href="#">Зарегестрироваться</a>
-    </footer>
+    </div>
 </div>
+
+<script>
+    var el = document.getElementById('p-sh'),
+        icon = document.getElementById('p-i'),
+        input = document.getElementById('input-p');
+
+    var userAgent = window.navigator.userAgent,
+        platform = window.navigator.platform,
+        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+        os = null;
+
+    if (macosPlatforms.indexOf(platform) !== -1) {
+        PCpass();
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+        Ppass();
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        PCpass();
+    } else if (/Android/.test(userAgent)) {
+        Ppass();
+    } else if (!os && /Linux/.test(platform)) {
+        PCpass();
+    }
+
+    function PCpass() {
+
+        el.addEventListener('mousedown', e => {
+
+            input.type = "text";
+            icon.innerText = "visibility_off";
+        });
+
+        el.addEventListener('mouseup', e => {
+
+            input.type = "password";
+            icon.innerText = "visibility";
+        });
+    }
+
+    function Ppass() {
+
+        el.addEventListener('click', e => {
+            if(input.type == "password"){
+
+                input.type = "text";
+                icon.innerText = "visibility_off";
+            } else {
+
+                input.type = "password";
+                icon.innerText = "visibility";
+            }
+        });
+    }
+
+</script>
 
 </body>
 </html>

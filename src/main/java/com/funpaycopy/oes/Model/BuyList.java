@@ -1,12 +1,12 @@
 package com.funpaycopy.oes.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 @Table(name = "buyList")
@@ -35,6 +35,9 @@ public class BuyList {
     @OneToMany(mappedBy = "buy", fetch = FetchType.EAGER)
     private Collection<RequestTS> requestTS;
 
+    @NotNull
+    private Timestamp buyDate;
+
     public BuyList() {
     }
 
@@ -43,6 +46,7 @@ public class BuyList {
         this.buyer = buyer;
         this.status = status;
         this.requestTS = requestTS;
+        this.buyDate = new Timestamp(new Date().getTime());
     }
 
     public long getIdBuy() {
@@ -83,5 +87,9 @@ public class BuyList {
 
     public void setRequestTS(Collection<RequestTS> requestTS) {
         this.requestTS = requestTS;
+    }
+
+    public Date getBuyDate() {
+        return buyDate;
     }
 }
