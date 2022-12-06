@@ -12,4 +12,5 @@ public interface GoodsListRepository extends JpaRepository<GoodsList, Long> {
     List<GoodsList> findAllBySelledFalseAndGoodsNameContainingOrderByIdGoodsDesc(String name);
     List<GoodsList> findAllBySelledFalseAndTypeTypeNameContainingOrderByIdGoodsDesc(String type);
     List<GoodsList> findAllBySelledFalseAndGoodsNameContainingAndTypeTypeNameContainingOrderByIdGoodsDesc(String name, String type);
+    GoodsList findByIdGoodsAndSelledFalse(Long id);
 }

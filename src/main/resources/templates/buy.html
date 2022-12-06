@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Главная</title>
+    <title>Покупки</title>
 
     <style>
         .input-field input:focus {
@@ -31,7 +31,7 @@
         <table class="table-auto">
             <caption>
                 <div class="row">
-                    <form action="/search">
+                    <form action="/searchBuy">
                         <div class="input-field col s9">
                             <input class="input-search" name="search" id="input-search" type="text"
                                    th:value="${search}">
@@ -47,13 +47,15 @@
                                         <option value="Прочее" th:selected="(${type} == 'Прочее')">Прочее</option>
                                     </select>
                                 </div>
-                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s3" type="submit">Поиск</button>
+                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s3"
+                                        type="submit">Поиск
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
             </caption>
-            <thead th:if="${not goodsList.isEmpty()}">
+            <thead th:if="${not buyList.isEmpty()}">
             <tr>
                 <th>Тип</th>
                 <th>Описание</th>
@@ -62,28 +64,28 @@
             </tr>
             </thead>
 
-            <tbody th:if="${not goodsList.isEmpty()}">
-            <div th:each="goods: ${goodsList}">
+            <tbody th:if="${not buyList.isEmpty()}">
+            <div th:each="buy: ${buyList}">
                 <a href="#">
                     <div>
                         <tr class="opacity-50 hover:opacity-100">
-                            <td><a class="font-bold h-full w-full" th:href="'item/' + ${goods.getIdGoods()}"
-                                   th:text="${goods.getType().getTypeName()}"></a></td>
+                            <td><a class="font-bold h-full w-full" th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
+                                   th:text="${buy.getGoods().getType().getTypeName()}"></a></td>
 
-                            <td><a class="hover:underline" th:href="'item/' + ${goods.getIdGoods()}"
-                                   th:text="${goods.getGoodsName()}"></a></td>
+                            <td><a class="hover:underline" th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
+                                   th:text="${buy.getGoods().getGoodsName()}"></a></td>
 
-                            <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}"
-                                   th:href="'profile/' +${goods.getSeller().getIdUser()}"></a></td>
+                            <td><a class="hover:underline" th:text="${buy.getGoods().getSeller().getLogin()}"
+                                   th:href="'profile/' +${buy.getGoods().getSeller().getIdUser()}"></a></td>
 
-                            <td th:text="${goods.getGoodsCost()} + '₽'"></td>
+                            <td th:text="${buy.getGoods().getGoodsCost()} + '₽'"></td>
                         </tr>
                     </div>
                 </a>
             </div>
             </tbody>
 
-            <tbody th:if="${goodsList.isEmpty()}">
+            <tbody th:if="${buyList.isEmpty()}">
             <tr>
                 <td colspan="4" class="text-center font-bold text-3xl">Ничего не найдено!</td>
             </tr>
