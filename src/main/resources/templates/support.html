@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Поддержка</title>
+
+    <style>
+        .input-field textarea:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field textarea:focus + label {
+            color: white !important;
+        }
+
+        .tabs .tab a {
+
+            color: #FFFFFF !important;
+        }
+    </style>
+</head>
+<body class="text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
+
+<div th:insert="fragments/header :: header"></div>
+
+<div class="cover-container p-3 flex-column">
+    <div class="row">
+        <div class="col s12">
+            <span class="relative text-white text-xl font-bold"></span>
+            <div class="card bg-black bg-opacity-50 darken-1" style="overflow: hidden; min-height: 1%">
+                <div class="card-content white-text">
+                    <div class="row">
+                        <div class="col s12">
+                            <ul class="tabs bg-neutral-900">
+                                <li class="tab col s3"><a class="active" href="#main">Основные темы: </a></li>
+                                <li class="tab col s3"><a href="#item">Поддержка по товарам</a></li>
+                            </ul>
+                        </div>
+
+                        <div id="main">
+                            <div class="col s7" style="margin-top: 1.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 1</button></div>
+                            <div class="col s7" style="margin-top: 0.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 2</button></div>
+                            <div class="col s7" style="margin-top: 0.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 3</button></div>
+                            <div class="col s7" style="margin-top: 0.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 4</button></div>
+                        </div>
+
+                        <div id="item">
+                            <div class="col s12 input-field" style="margin-top: 2.5rem !important;">
+                                <form>
+                                    <textarea class="materialize-textarea" style="min-height: 30vh" type="text" placeholder="Правила составления заявки:&#10;&#10;1) &#10;2) &#10;3) &#10;4) &#10;5)"></textarea>
+                                    <button class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white">Отправить</button>
+
+                                    <button type="button" class="btn-small rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">?</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.tabs').tabs();
+    });
+
+    $(document).ready(function () {
+        $('.tooltipped').tooltip()
+    });
+</script>
+</body>
+</html>

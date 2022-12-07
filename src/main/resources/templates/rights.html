@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Повышение прав</title>
+
+    <style>
+        .input-field textarea:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field textarea:focus + label {
+            color: white !important;
+        }
+
+        .tabs .tab a {
+
+            color: #FFFFFF !important;
+        }
+    </style>
+
+</head>
+<body class="text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
+
+<div th:insert="fragments/header :: header"></div>
+
+<div class="cover-container p-3 flex-column">
+    <div class="row">
+        <div class="col s12">
+            <span class="relative text-white text-xl font-bold"></span>
+            <div class="card bg-black bg-opacity-50 darken-1" style="overflow: hidden; min-height: 1%">
+                <div class="card-content white-text">
+                    <div class="row">
+                        <div class="col s12">
+                            <ul class="tabs bg-neutral-900">
+                                <li class="tab col s3"><a class="active" href="#seller">Права продавца</a></li>
+                                <li class="tab col s3"><a href="#moderator">Парава модератора</a></li>
+                            </ul>
+                        </div>
+
+                        <div id="seller" class="col s12">
+                            <div sec:authorize="not hasAuthority('SELLER')" style="margin-top: 2.5rem !important;">
+                                <span disabled th:text="'Цена: 150₽'" class="text-white mr-3 text-xl"></span>
+                                <form>
+                                    <a class="waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black" href="#"><i class="large material-icons">payments</i></a>
+                                </form>
+                            </div>
+
+                            <div  sec:authorize="hasAuthority('SELLER')" style="margin-top: 2.5rem !important;">
+                                <span disabled th:text="'У вас уже есть права продавца!'" class="text-white mr-3 text-xl"></span>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <div id="moderator" class="col s12">
+                            <div class="input-field" sec:authorize="not hasAuthority('MODERATOR')" style="margin-top: 2.5rem !important;">
+                                <form>
+                                    <textarea class="materialize-textarea" style="min-height: 30vh" type="text" placeholder="Правила составления заявки:&#10;&#10;1) &#10;2) &#10;3) &#10;4) &#10;5)"></textarea>
+                                    <button class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white">Отправить</button>
+
+                                    <button type="button" class="btn-small rounded-3xl waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">?</button>
+                                </form>
+                            </div>
+
+                            <div sec:authorize="hasAuthority('MODERATOR')" style="margin-top: 2.5rem !important;">
+                                <span disabled th:text="'У вас уже есть права модератора!'" class="text-white mr-3 text-xl"></span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.tabs').tabs();
+    });
+
+    $(document).ready(function(){
+        $('.tooltipped').tooltip()
+    });
+</script>
+</body>
+</html>
