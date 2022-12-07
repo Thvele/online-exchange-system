@@ -1,4 +1,9 @@
 <div th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/css/materialize/css/materialize.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
     <header style="font-family: 'Century Gothic';">
 
         <div class="p-3 border-gray-200 px-6 py-2.5" style="background: #040204">
@@ -6,7 +11,7 @@
                 <a href="/" class="flex items-center">
                     <img src="https://i.imgur.com/ILxHPXF.png" class="mr-5" style="width: 50px; height: 50px"
                          alt="logo"/>
-                    <span id="sys-name" class="self-center text-3xl font-bold whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-[#f64f59] via-[#6b6b83] to-[#aa4b6b]">OES</span>
+                    <span id="sys-name" class="self-center text-3xl font-bold whitespace-nowrap text-neutral-600">OES</span>
                 </a>
 
                 <div class="justify-between items-center flex-auto w-auto mx-16">
@@ -15,10 +20,16 @@
                             <a href="/" class="block px-2 text-gray-400 hover:text-white">Главная</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-2 text-gray-400 hover:text-white" sec:authorize="isAuthenticated()">Поддержка</a>
+                            <a href="/support" class="block px-2 text-gray-400 hover:text-white" sec:authorize="isAuthenticated()">Поддержка</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-2 text-gray-400 hover:text-white" sec:authorize="isAuthenticated()">Повышение прав</a>
+                            <a href="/rights" class="block px-2 text-gray-400 hover:text-white" sec:authorize="isAuthenticated()">Повышение прав</a>
+                        </li>
+                        <li>
+                            <a id="backup" class="block px-2 text-red-600 hover:text-white cursor-pointer">Резервное копирование</a>
+                        </li>
+                        <li>
+                            <a id="restore" class="block px-2 text-red-600 hover:text-white cursor-pointer">Восстановление</a>
                         </li>
                     </ul>
                 </div>
@@ -37,11 +48,18 @@
                             <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
                                    style="color: white !important; font-size: 0.9rem !important;"
                                    href="/profileEDT">Настройки профиля</a></li>
-                            <li class="divider bg-neutral-800" tabindex="-1"></li>
                             <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
                                    style="color: white !important; font-size: 0.9rem !important;"
-                                   id="userB" href="#!"></a></li>
+                                   href="/buy">Покупки</a></li>
+
                             <li class="divider bg-neutral-800" tabindex="-1"></li>
+
+                            <li><a class="waves-effect waves-light modal-trigger bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 focus:text-black"
+                                   style="color: white !important; font-size: 0.9rem !important;"
+                                   id="userB" href="#balance"></a></li>
+
+                            <li class="divider bg-neutral-800" tabindex="-1"></li>
+
                             <li style="height: 1% !important;">
                                 <form action="/logout" method="post" class="h-full">
                                     <button type="submit"
@@ -53,6 +71,22 @@
 
                         <img id="userI" class="right mr-5 rounded-sm" src="https://i.imgur.com/ILxHPXF.png"
                              style="width: 54px; height: 54px" alt="icon"/>
+
+                        <form action="/thanku" method="post">
+                            <div id="balance" class="modal bg-neutral-900">
+                                <div class="modal-content">
+                                    <div class="input-field col s9">
+                                        <input class="input-search text-white" name="sum" id="input-search" type="number" autocomplete="off" value="10" min="10" max="50000" step=".01" required>
+                                        <label for="input-search">Сумма</label>
+                                        <span class="helper-text ml-5" style="color: rgb(115 115 115)">от 10 до 50000 рублей</span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-neutral-900">
+                                    <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white" type="submit">Оплатить</button>
+                                </div>
+                            </div>
+                        </form>
+
                     </div>
                     <a sec:authorize="isAnonymous()"
                        class="waves-effect waves-light btn-small text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white"
@@ -61,10 +95,15 @@
             </div>
         </div>
 
+
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="/css/materialize/js/materialize.min.js"></script>
 
         <script>
             $('.dropdown-trigger').dropdown();
+            $(document).ready(function(){
+                $('.modal').modal();
+            });
 
             var a = document.getElementById('ac');
 
@@ -88,6 +127,20 @@
                 document.getElementById('userN').innerHTML = getCookie('uN');
                 document.getElementById('userB').innerHTML = 'Баланс: ' + getCookie('uB');
                 document.getElementById('userI').src = getCookie('uP');
+            });
+
+            document.getElementById('restore').addEventListener('click', function () {
+
+                $.get('/restore', {dbName: 'kp_test1', filepath: 'C:\\Users\\Public\\Documents\\backup\\backup.sql'}, function(data){
+                    alert(data);
+                });
+            });
+
+            document.getElementById('backup').addEventListener('click', function () {
+
+                $.get('/backup', {dbName: 'kp_test1'}, function(data){
+                    alert(data);
+                });
             });
         </script>
     </header>

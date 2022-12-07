@@ -92,4 +92,8 @@ public class BuyList {
     public Date getBuyDate() {
         return buyDate;
     }
+
+    public void setBuyDate() {
+        this.buyDate = new Timestamp(new Date().getTime());
+    }
 }
