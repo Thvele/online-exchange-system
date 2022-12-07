@@ -19,6 +19,10 @@
             background: #1A1B1C;
             color: white;
         }
+
+        ul.dropdown-content.select-dropdown li span:hover {
+            background: rgb(115 115 115);
+        }
     </style>
 </head>
 
@@ -92,13 +96,5 @@
     </div>
 
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('select');
-        M.FormSelect.init(elems);
-    });
-</script>
-
 </body>
 </html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование профиля</title>
+
+    <style>
+
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+
+        input[type="number"] {
+            min-width: 50px;
+        }
+    </style>
+</head>
+<body class="text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
+
+<div th:insert="fragments/header :: header"></div>
+
+<div class="cover-container p-3 flex-column">
+    <div class="row">
+        <div class="col s12">
+            <div class="card bg-black bg-opacity-50 darken-1" style="overflow: hidden; min-height: 1%; height: 83vh;">
+                <div class="card-content white-text">
+                    <div class="col s12" th:object="${user}">
+                        <div class="flex">
+                            <div class="card h-48 w-48">
+                                <div class="card-image">
+                                    <img th:src="*{profilePhoto}" style="width: 200px; height: 180px">
+                                </div>
+                            </div>
+                            <div class="p-3 pl-0">
+                                <span class="flex-auto rounded-tr-lg text-3xl ml-5 font-bold order-1"
+                                      th:text="*{login}"></span>
+                                <a class="w-full py-2 px-4 mt-3 rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white modal-trigger"
+                                   href="#photoModal">Изменить аватарку</a>
+                            </div>
+                            <div class="p-3 pl-0">
+
+                            </div>
+
+                        </div>
+                        <div class="flex col s12">
+                            <div class="w-full input-field">
+                                <div class="text-center text-red-600 text-xl">
+                                    <span th:text="${exception}"></span>
+                                </div>
+                                <form action="/profileEDT" method="post">
+                                    <input required type="email" name="email" placeholder="example@ex.ex"
+                                           th:value="*{email}">
+                                    <input required type="password" name="pass" placeholder="Пароль">
+                                    <input class="tooltipped" name="newPass" data-position="top"
+                                           data-tooltip="Если вы не хотите менять пароль оставьте данное поле пустым"
+                                           type="text" placeholder="Новый пароль">
+                                    <input class="tooltipped" name="reNewPass" data-position="top"
+                                           data-tooltip="Если вы не хотите менять пароль оставьте данное поле пустым"
+                                           type="text" placeholder="Подтвердите пароль">
+                                    <button class="mt-3">Сохранить</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div id="photoModal" class="modal bg-neutral-900" style="width: 40vw">
+                            <div class="modal-content">
+                                <div class="col s12">
+                                    <ul class="tabs bg-neutral-900">
+                                        <li class="tab col s6"><a class="active" href="#photo-file">Фото с устройства</a></li>
+                                        <li class="tab col s6"><a href="#photo-link">Фото ссылкой</a></li>
+                                    </ul>
+                                </div>
+
+                                <form action="/filePhoto" method="post" enctype="multipart/form-data">
+                                    <div id="photo-file" class="col s9" style="width: 100% !important;">
+                                        <div class="input-field">
+                                            <input id="photo-input" class="input-input text-white" name="photo"
+                                                   type="file" accept=".png,.jpg,.jpeg,.gif">
+                                        </div>
+                                        <div class="modal-footer bg-neutral-900">
+                                            <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                                    type="submit">Сохранить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <form action="/linkPhoto" method="post">
+                                    <div id="photo-link" class="col s9" style="width: 100% !important;">
+                                        <div class="input-field">
+                                            <input id="photo-input-link" class="input-input text-white" name="photo"
+                                                   type="text">
+                                            <label for="photo-input-link">Ссылка на фото</label>
+                                        </div>
+                                        <div class="modal-footer bg-neutral-900">
+                                            <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                                    type="submit">Сохранить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

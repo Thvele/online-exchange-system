@@ -12,8 +12,9 @@
 
     <div>
         <div class="justify-center items-center text-white font-bold text-3xl h-full" style="display:inline-block; vertical-align: middle">
-            <i class="material-icons text-green-600" style="font-size: 112px">done</i>
-            <span>Спасибо, оплата прошла успешно!</span>
+            <i class="material-icons text-red-600" style="font-size: 112px" th:text="${icon}" th:if="${icon} == 'unpublished'"></i>
+            <i class="material-icons text-green-600" style="font-size: 112px" th:text="${icon}" th:if="${icon} == 'published_with_changes'"></i>
+            <span th:text="${msg}"></span>
         </div>
         <div class="w-full text-center cursor-pointer">
             <span class="text-sm text-neutral-600" onclick="window.location.href = '/'">Вы будете перенаправлены на главную страницу через 5 секунд</span>

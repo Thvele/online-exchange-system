@@ -1,18 +1,5 @@
 # online-exchange-system
 course project s.2
 
-POST API REQUEST EXAMPLE:
-  ```
-    {
-      "login": "testAPI2222",
-      "password": "testAPI123!",
-      "email": "apitest@ex.com",
-      "balance": 222.10,
-      "active": true,
-      "roles": [ "USER", "ADMIN", "MODERATOR" ],
-      "goods": [],
-      "buys": [],
-      "requestTSCollection": [],
-      "requestMRGCollection": []
-    }
-  ```
+tailwind configuration command 
+```npx tailwindcss -i ./src/main/resources/static/css/tailwind.css -o ./src/main/resources/static/css/style.css --watch```

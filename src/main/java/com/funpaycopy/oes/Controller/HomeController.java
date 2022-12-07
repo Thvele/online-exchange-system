@@ -1,25 +1,18 @@
 package com.funpaycopy.oes.Controller;
 
-import com.funpaycopy.oes.Model.BuyList;
-import com.funpaycopy.oes.Model.GoodsList;
-import com.funpaycopy.oes.Model.User;
-import com.funpaycopy.oes.Repository.BuyListRepository;
-import com.funpaycopy.oes.Repository.BuyStatusRepository;
-import com.funpaycopy.oes.Repository.GoodsListRepository;
-import com.funpaycopy.oes.Repository.UserRepository;
+import com.funpaycopy.oes.Model.*;
+import com.funpaycopy.oes.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
@@ -36,6 +29,14 @@ public class HomeController {
     BuyListRepository buyListRepository;
     @Autowired
     BuyStatusRepository buyStatusRepository;
+    @Autowired
+    RequestTsStatusRepository requestTsStatusRepository;
+    @Autowired
+    RequestTSRepository requestTSRepository;
+    @Autowired
+    RequestMRGRepository requestMRGRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
     public String home(Model model, HttpServletResponse response, Principal principal) {
@@ -110,7 +111,7 @@ public class HomeController {
         GoodsList goodsList = goodsListRepository.findByIdGoodsAndSelledFalse(id);
         User seller = userRepository.findByLoginAndActive(goodsList.getSeller().getLogin(), true);
 
-        if(user.getBalance().compareTo(goodsList.getGoodsCost()) > 0){
+        if(user.getBalance().compareTo(goodsList.getGoodsCost()) >= 0){
 
             user.setBalance(user.getBalance().subtract(goodsList.getGoodsCost()));
             seller.setBalance(seller.getBalance().add(goodsList.getGoodsCost()));
@@ -264,13 +265,34 @@ public class HomeController {
     }
 
     @PostMapping("/thanku")
-    public String thanku(Principal principal, BigDecimal sum) {
+    public String thanku(Model model, Principal principal, BigDecimal sum, String method) {
 
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
 
-        user.setBalance(user.getBalance().add(sum));
-        userRepository.save(user);
-        return ("redirect:/thanku");
+        if(method.equals("in")) {
+
+            user.setBalance(user.getBalance().add(sum));
+            userRepository.save(user);
+
+            model.addAttribute("icon", "published_with_changes");
+            model.addAttribute("msg", "Спасибо, оплата прошла успешно!");
+        } else {
+
+            if(user.getBalance().compareTo(sum) >= 0){
+
+                user.setBalance(user.getBalance().subtract(sum));
+                userRepository.save(user);
+
+                model.addAttribute("icon", "published_with_changes");
+                model.addAttribute("msg", "Средства придут к вам на счёт в течении 24 часов");
+            } else {
+
+                model.addAttribute("icon", "unpublished");
+                model.addAttribute("msg", "У вас не хватает средств!");
+            }
+        }
+
+        return ("thanku");
     }
 
     @GetMapping("/rights")
@@ -279,13 +301,82 @@ public class HomeController {
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
 
         model.addAttribute("user", user);
+
+        if(requestMRGRepository.findByUserLogin(principal.getName()) != null){
+
+            model.addAttribute("requestSend", true);
+        }
+
         return ("rights");
     }
 
-    @GetMapping("/support")
-    public String supportView() {
+    @PostMapping("/rights")
+    public String getSellerRights(Principal principal, Model model) {
 
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        if(user.getBalance().compareTo(BigDecimal.valueOf(150)) >= 0){
+
+            user.setBalance(user.getBalance().subtract(BigDecimal.valueOf(150)));
+
+            Object[] roles = user.getRoles().toArray();
+
+            user.getRoles().clear();
+
+            for(Object role : roles) {
+
+                user.getRoles().add(Role.valueOf(role.toString()));
+            }
+            user.getRoles().add(Role.SELLER);
+
+            userRepository.save(user);
+            return("redirect:/logout");
+        } else {
+
+            model.addAttribute("icon", "unpublished");
+            model.addAttribute("msg", "У вас не хватает средств!");
+
+            return ("thanku");
+        }
+    }
+
+    @PostMapping("/modrights")
+    public String getModRights(Principal principal, @RequestParam String desc) {
+
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        RequestMRG requestMRG = new RequestMRG();
+
+        requestMRG.setUser(user);
+        requestMRG.setRequestMRGDesc(desc);
+
+        requestMRGRepository.save(requestMRG);
+        return ("redirect:/");
+    }
+
+    @GetMapping("/support")
+    public String supportView(Model model, Principal principal) {
+
+        model.addAttribute("buys", buyListRepository.findAllByBuyerLoginAndRequestTSNull(principal.getName()));
         return ("support");
+    }
+
+    @PostMapping("/support")
+    public String reqTS(Principal principal, @RequestParam String name, @RequestParam String desc, @RequestParam Long buyId) {
+
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+        BuyList buyList = buyListRepository.findById(buyId).orElseThrow();
+
+        RequestTS requestTS = new RequestTS();
+
+        requestTS.setBuy(buyList);
+        requestTS.setRequestStatus(requestTsStatusRepository.findById("На рассмотрении").orElseThrow());
+        requestTS.setRequestName(name);
+        requestTS.setRequestDesc(desc);
+
+        requestTSRepository.save(requestTS);
+
+        return ("redirect:/");
     }
 
     @GetMapping("/backup")
@@ -319,21 +410,94 @@ public class HomeController {
 
     @GetMapping("/restore")
     @ResponseBody
-    public String restore(String dbName, String filepath){
+    public String restore(String dbName){
         try {
 
-            String executeCmd = "cmd.exe /c mysql -uroot " + dbName + " < " + filepath;
+            String executeCmd = "cmd.exe /c mysql -uroot " + dbName + " < " + System.getProperty("user.dir") + "\\backup\\backup.sql";
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
             int processComplete = runtimeProcess.waitFor();
 
             if (processComplete == 0) {
-                return ("БД успешно восстановлена из файла: " + filepath);
+                return ("БД успешно восстановлена из файла: " + System.getProperty("user.dir") + "\\backup\\backup.sql");
             } else {
-                return ("Ошибка при восстановлении БД из файла: " + filepath);
+                return ("Ошибка при восстановлении БД из файла: " + System.getProperty("user.dir") + "\\backup\\backup.sql");
             }
         } catch(IOException | InterruptedException | HeadlessException e){
 
-            return ("Ошибка при восстановлении БД из файла: " + filepath + " | " + e.getMessage());
+            return ("Ошибка при восстановлении БД из файла: " + System.getProperty("user.dir") + "\\backup\\backup.sql" + " | " + e.getMessage());
         }
+    }
+
+    @GetMapping("/profileEDT")
+    public String editView(Model model, Principal principal) {
+
+        model.addAttribute("user", userRepository.findByLoginAndActive(principal.getName(), true));
+        return ("profileEDT");
+    }
+
+    @PostMapping("/profileEDT")
+    public String edit(Model model, Principal principal, @RequestParam String email, @RequestParam String pass, @RequestParam(required = false) String newPass, @RequestParam(required = false) String reNewPass) {
+
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        if(passwordEncoder.matches(pass, user.getPassword())) {
+
+            user.setEmail(email);
+
+            if(!newPass.isEmpty() && !reNewPass.isEmpty()){
+
+                if(newPass.equals(reNewPass)) {
+
+                    user.setPassword(passwordEncoder.encode(newPass));
+                } else {
+
+                    model.addAttribute("exception", "Пароли не совпадают");
+                    model.addAttribute("user", user);
+                    return ("profileEDT");
+                }
+            }
+
+            userRepository.save(user);
+            return ("redirect:/");
+        } else {
+
+            model.addAttribute("exception", "Неверный пароль");
+            model.addAttribute("user", user);
+            return ("profileEDT");
+        }
+    }
+
+    @PostMapping("/linkPhoto")
+    public String linkPhoto(Principal principal, @RequestParam String photo) {
+
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        user.setProfilePhoto(photo);
+
+        userRepository.save(user);
+        return ("redirect:/");
+    }
+
+    @PostMapping("/filePhoto")
+    public String filePhoto(Principal principal, @RequestParam MultipartFile photo) {
+
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        try{
+
+            String folderPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\usericons\\";
+            File temp = new File(folderPath + user.getLogin() + photo.getOriginalFilename());
+            photo.transferTo(temp);
+
+            user.setProfilePhoto("/usericons/" + user.getLogin() + photo.getOriginalFilename());
+
+            userRepository.save(user);
+        } catch (Exception e) {
+
+            return ("profileEDT");
+        }
+
+
+        return ("redirect:/");
     }
 }

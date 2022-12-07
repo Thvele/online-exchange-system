@@ -35,41 +35,73 @@
                     <div class="row">
                         <div class="col s12">
                             <ul class="tabs bg-neutral-900">
-                                <li class="tab col s3"><a class="active" href="#seller">Права продавца</a></li>
-                                <li class="tab col s3"><a href="#moderator">Парава модератора</a></li>
+                                <li class="tab col s6"><a class="active" href="#seller">Права продавца</a></li>
+                                <li class="tab col s6"><a href="#moderator">Парава модератора</a></li>
                             </ul>
                         </div>
 
                         <div id="seller" class="col s12">
                             <div sec:authorize="not hasAuthority('SELLER')" style="margin-top: 2.5rem !important;">
-                                <span disabled th:text="'Цена: 150₽'" class="text-white mr-3 text-xl"></span>
-                                <form>
-                                    <a class="waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black" href="#"><i class="large material-icons">payments</i></a>
-                                </form>
+                                <span disabled th:text="'Цена: 150₽ (навсегда)'" class="text-white mr-3 text-xl"></span>
+                                <a class="waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black modal-trigger"
+                                   href="#modal-seller"><i class="large material-icons">payments</i></a>
+
                             </div>
 
-                            <div  sec:authorize="hasAuthority('SELLER')" style="margin-top: 2.5rem !important;">
-                                <span disabled th:text="'У вас уже есть права продавца!'" class="text-white mr-3 text-xl"></span>
+                            <div sec:authorize="hasAuthority('SELLER')" style="margin-top: 2.5rem !important;">
+                                <span disabled th:text="'У вас уже есть права продавца!'"
+                                      class="text-white mr-3 text-xl"></span>
                             </div>
                         </div>
 
-                        </div>
+                        <form action="/rights" method="post">
+                            <div id="modal-seller" class="modal bg-neutral-900">
+                                <div class="modal-content">
+                                    <span class="text-center text-white">После покупки вам придётся снова авторизоваться, вы уверены, что хотите совершить покупку?</span>
+                                </div>
+                                <div class="modal-footer bg-neutral-900">
+                                    <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                            type="submit">Купить
+                                    </button>
+                                    <button class="modal-close btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                            type="button">Отмена
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
 
                         <div id="moderator" class="col s12">
-                            <div class="input-field" sec:authorize="not hasAuthority('MODERATOR')" style="margin-top: 2.5rem !important;">
-                                <form>
-                                    <textarea class="materialize-textarea" style="min-height: 30vh" type="text" placeholder="Правила составления заявки:&#10;&#10;1) &#10;2) &#10;3) &#10;4) &#10;5)"></textarea>
-                                    <button class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white">Отправить</button>
+                            <div class="input-field" sec:authorize="not hasAuthority('MODERATOR')"
+                                 style="margin-top: 2.5rem !important;" th:if="${requestSend} == false">
+                                <form action="/modrights" method="post">
+                                <textarea name="desc" required class="materialize-textarea" style="min-height: 30vh"
+                                          type="text"
+                                          placeholder="1)ФИО &#10;2)Как с вами связаться (discord(прим.: example#0000)) &#10;3)Сколько вы можете проводить время онлайн (в часах)"></textarea>
+                                    <button type="submit"
+                                            class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white">
+                                        Отправить
+                                    </button>
 
-                                    <button type="button" class="btn-small rounded-3xl waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">?</button>
+                                    <button type="button"
+                                            class="btn-small rounded-3xl waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped"
+                                            style="word-break: keep-all" data-position="right"
+                                            data-tooltip="Правила составления заявки: <br/><br/> 1)ФИО <br/>2)Как с вами связаться (discord(прим.: example#0000)) <br/>3)Сколько вы можете проводить время онлайн (в часах)">
+                                        ?
+                                    </button>
                                 </form>
+                            </div>
+
+                            <div sec:authorize="not hasAuthority('MODERATOR')" th:if="${requestSend} == true"
+                                 style="margin-top: 2.5rem !important;">
+                                <span disabled th:text="'Вы уже отправляли заявку!'"
+                                      class="text-white mr-3 text-xl"></span>
                             </div>
 
                             <div sec:authorize="hasAuthority('MODERATOR')" style="margin-top: 2.5rem !important;">
-                                <span disabled th:text="'У вас уже есть права модератора!'" class="text-white mr-3 text-xl"></span>
+                            <span disabled th:text="'У вас уже есть права модератора!'"
+                                  class="text-white mr-3 text-xl"></span>
                             </div>
                         </div>
-
 
                     </div>
                 </div>
@@ -77,15 +109,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function(){
-        $('.tabs').tabs();
-    });
-
-    $(document).ready(function(){
-        $('.tooltipped').tooltip()
-    });
-</script>
 </body>
 </html>

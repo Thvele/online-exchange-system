@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RequestMRGRepository extends JpaRepository<RequestMRG, Long> {
 
-
+    RequestMRG findByUserLogin(String login);
 }

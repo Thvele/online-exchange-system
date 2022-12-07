@@ -11,6 +11,21 @@
 
     <style>
 
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+
         .highcharts-figure,
         .highcharts-data-table table {
             min-width: 320px;
@@ -66,7 +81,6 @@
 <div class="cover-container p-3 flex-column" th:object="${user}">
     <div class="row">
         <div class="col s12">
-            <span class="relative text-white text-xl font-bold"></span>
             <div class="card bg-black bg-opacity-50 darken-1" style="overflow: hidden; min-height: 1%">
                 <div class="card-content white-text">
                     <div class="col s8">

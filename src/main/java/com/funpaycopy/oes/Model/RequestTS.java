@@ -26,7 +26,6 @@ public class RequestTS {
     private RequestStatus requestStatus;
 
     @JsonIgnoreProperties(value = {"requestTSCollection"})
-    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE)
     private User employee;
 

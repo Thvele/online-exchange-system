@@ -15,9 +15,28 @@
             color: white !important;
         }
 
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
         .tabs .tab a {
 
             color: #FFFFFF !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+
+        ul.dropdown-content.select-dropdown li span:hover {
+            background: rgb(115 115 115);
         }
     </style>
 </head>
@@ -34,25 +53,65 @@
                     <div class="row">
                         <div class="col s12">
                             <ul class="tabs bg-neutral-900">
-                                <li class="tab col s3"><a class="active" href="#main">Основные темы: </a></li>
-                                <li class="tab col s3"><a href="#item">Поддержка по товарам</a></li>
+                                <li class="tab col s6"><a class="active" href="#main">Основные темы</a></li>
+                                <li class="tab col s6"><a href="#item">Поддержка по товарам</a></li>
                             </ul>
                         </div>
 
                         <div id="main">
-                            <div class="col s7" style="margin-top: 1.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 1</button></div>
-                            <div class="col s7" style="margin-top: 0.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 2</button></div>
-                            <div class="col s7" style="margin-top: 0.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 3</button></div>
-                            <div class="col s7" style="margin-top: 0.5rem !important;"><button type="button" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all; width: 70%" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">Вопрос 4</button></div>
+                            <div class="col s7" style="margin-top: 1.5rem !important;">
+                                <button type="button"
+                                        class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped"
+                                        style="word-break: keep-all; width: 70%" data-position="right"
+                                        data-tooltip="На нашем сайте отсутствует функция изменения имени (логина). <br/>Однако если у вас есть веские основания для этого, пожалуйста, обратитесь в техническую поддержку.">
+                                    Изменение логина
+                                </button>
+                            </div>
+                            <div class="col s7" style="margin-top: 0.5rem !important;">
+                                <button type="button"
+                                        class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped"
+                                        style="word-break: keep-all; width: 70%" data-position="right"
+                                        data-tooltip="На данный момент светлая версия сайта отсутствует">Светлая версия
+                                    сайта
+                                </button>
+                            </div>
+                            <div class="col s7" style="margin-top: 0.5rem !important;">
+                                <button type="button"
+                                        class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped"
+                                        style="word-break: keep-all; width: 70%" data-position="right"
+                                        data-tooltip="Вы можете иметь столько аккаунтов, сколько пожелаете, однако: <br/> Если вы нарушите правила на одном аккаунте - будут заблокированы все аккаунты ">
+                                    Твинки
+                                </button>
+                            </div>
                         </div>
 
                         <div id="item">
                             <div class="col s12 input-field" style="margin-top: 2.5rem !important;">
-                                <form>
-                                    <textarea class="materialize-textarea" style="min-height: 30vh" type="text" placeholder="Правила составления заявки:&#10;&#10;1) &#10;2) &#10;3) &#10;4) &#10;5)"></textarea>
-                                    <button class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white">Отправить</button>
+                                <form action="/support" method="post">
+                                    <div class="row">
+                                        <input required name="name" class="col s7" type="text" minlength="1" placeholder="Название темы: [Номер заказа] Продавец, Кратко проблема">
+                                        <div class="col s5 w-full">
+                                            <select id="select-buy" name="buyId" class="w-full">
+                                                <option value="">Выберите покупку</option>
+                                                <div th:each="el: ${buys}"><option th:value="${el.getIdBuy()}" th:text="${el.getGoods().getGoodsName()}" ></option></div>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <textarea required name="desc" class="materialize-textarea" style="min-height: 30vh" minlength="1" type="text"
+                                              placeholder="1) Ник продавца: *текст* &#10;2) Номер заказа: *текст* &#10;3) Как с вами связаться ( ссылка на страницу VK или discord ): *текст*&#10;4) Видео (одно единственное) вашей покупки и проверки,только в онлайн просмотре на ютубе, яндексе и прочих сайтах,скачивать ваше видео на комп не кто не будет и только на весь экран, без остановок и во весь экран (без док-в жалоба не рассматривается,вы получаете отказ,исключение - признание своей вины продавцом.) &#10;5) Подробное описание проблемы: *текст*"></textarea>
+                                    <button id="req-send" type="submit" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white" disabled>
+                                        Отправить
+                                    </button>
 
-                                    <button type="button" class="btn-small rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped" style="word-break: keep-all" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> 1) <br/>2) <br/>3) <br/>4) <br/>5)">?</button>
+                                    <button type="button"
+                                            class="btn-small rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white tooltipped"
+                                            style="word-break: keep-all" data-position="right" data-tooltip="Правила составления заявки: <br/><br/> Название темы: [Номер заказа] Продавец, Кратко проблема<br/><br/>Содержание темы: <br/><br/>
+                                                                                            1) Ник продавца: *текст* <br/>
+                                                                                            2) Номер заказа: *текст* <br/>
+                                                                                            3) Как с вами связаться ( ссылка на страницу VK или discord ): *текст* <br/>
+                                                                                            4) Видео (одно единственное) вашей покупки и проверки,только в онлайн просмотре на ютубе,<br/>яндексе и прочих сайтах,скачивать ваше видео на комп не кто не будет и только на весь экран,<br/>без остановок и во весь экран (без док-в жалоба не рассматривается,вы получаете отказ,исключение - признание своей вины продавцом.) <br/>
+                                                                                            5) Подробное описание проблемы: *текст*">?
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -64,12 +123,22 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        $('.tabs').tabs();
-    });
+    var select = document.getElementById('select-buy'),
+        button = document.getElementById('req-send');
 
-    $(document).ready(function () {
-        $('.tooltipped').tooltip()
+    select.addEventListener('change', function () {
+
+        if(select.value == '') {
+
+            button.disabled = true;
+        } else {
+
+            button.disabled = false;
+        }
+    })
+
+    $(document).ready(function(){
+        $('select').formSelect();
     });
 </script>
 </body>
