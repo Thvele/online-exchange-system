@@ -48,11 +48,13 @@
                     <p class="font-bold text-2xl">Описание: </p>
                     <span style="white-space: pre-line" th:text="${goods.goodsDesc}"></span>
                 </div>
-                <div class="card-action" style="height: 10%">
+                <div class="card-action" style="height: 10%" th:if="not (${goods.seller.getLogin()} == ${login})">
                     <span disabled th:text="'Цена: ' + ${goods.goodsCost} + '₽'" class="text-white mr-3 text-xl"></span>
-                    <a th:if="(${goods.goodsCost} > ${balance}) && (not ${goods.seller.getLogin()}.equals(${login}))" class="disabled waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black modal-trigger"
-                       href="#no_money" ><i class="large material-icons">payments</i></a>
-                    <a th:if="(${goods.goodsCost} < ${balance}) && (not ${goods.seller.getLogin()}.equals(${login}))" class="waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black modal-trigger"
+                    <a th:if="(${goods.getGoodsCost()} > ${balance})"
+                       class="disabled waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black modal-trigger"
+                       href="#no_money"><i class="large material-icons">payments</i></a>
+                    <a th:if="(${goods.getGoodsCost()} <= ${balance})"
+                       class="waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black modal-trigger"
                        href="#buy"><i class="large material-icons">payments</i></a>
                 </div>
 

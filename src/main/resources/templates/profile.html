@@ -21,9 +21,23 @@
             color: white !important;
         }
 
+        .input-field textarea:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field textarea:focus + label {
+            color: white !important;
+        }
+
         ul.dropdown-content.select-dropdown li span {
             background: #1A1B1C;
             color: white;
+        }
+
+        ul.dropdown-content.select-dropdown li span:hover {
+            background: rgb(115 115 115);
         }
 
         .highcharts-figure,
@@ -91,14 +105,25 @@
                                 </div>
                             </div>
                             <div class="p-3 pl-0 row">
-                                <span class="flex-auto rounded-tr-lg text-3xl ml-5 font-bold order-1" th:text="*{login}"></span>
+                                <span class="flex-auto rounded-tr-lg text-3xl ml-5 font-bold order-1"
+                                      th:text="*{login}"></span>
                             </div>
 
                         </div>
 
-                        <span class="card-title">Товары на продаже: </span>
-                        <div class="flex flex-row justify-start items-start overflow-x-auto" th:if="${not goods.isEmpty()}">
-                            <div id="item" class="mr-5 mb-3" style="max-width: 300px; min-width: 300px; min-height: 250px !important;"
+                        <div class="row flex">
+                            <span class="card-title">Товары на продаже: </span>
+                            <a type="button"
+                               class="btn-small waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white ml-5 modal-trigger"
+                               style="word-break: keep-all"
+                               href="#goodsADD">
+                                +
+                            </a>
+                        </div>
+                        <div class="flex flex-row justify-start items-start overflow-x-auto"
+                             th:if="${not goods.isEmpty()}">
+                            <div id="item" class="mr-5 mb-3"
+                                 style="max-width: 300px; min-width: 300px; min-height: 250px !important;"
                                  th:each="element: ${goods}">
                                 <div class="bg-gradient-to-tl from-green-400 to-indigo-800 rounded rounded-md py-1 h-full">
                                     <div class="card darken-1 bg-black bg-opacity-40 rounded rounded-md mx-2">
@@ -115,6 +140,50 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div id="goodsADD" class="modal bg-neutral-900" style="height: 100%">
+                            <div class="modal-content">
+                                <form action="/item" method="post">
+                                    <div id="input" class="col s12">
+                                        <div class="input-field">
+                                            <input class="input-input text-white" name="name" id="input-name"
+                                                   type="text" autocomplete="off" required>
+                                            <label for="input-name">Название</label>
+                                        </div>
+                                        <div class="input-field">
+                                                <textarea class="materialize-textarea text-white" name="desc"
+                                                          id="textarea-desc"
+                                                          type="text" autocomplete="off" required ></textarea>
+                                            <label for="textarea-desc">Описание</label>
+                                        </div>
+                                        <div class="input-field">
+                                                <textarea class="materialize-textarea text-white" name="details"
+                                                          id="textarea-details"
+                                                          type="text" autocomplete="off" required ></textarea>
+                                            <label for="textarea-details">Реквизиты</label>
+                                        </div>
+                                        <div class="input-field">
+                                            <input class="input-input text-white" name="sum" id="input-sum"
+                                                   type="number" autocomplete="off" value="10" min="10" max="50000"
+                                                   step=".01" required>
+                                            <label for="input-sum">Сумма</label>
+                                        </div>
+                                        <div class="input-field">
+                                            <select name="type" required>
+                                                <option value="Аккаунт" selected>Аккаунт</option>
+                                                <option value="Предмет">Предмет</option>
+                                                <option value="Прочее">Прочее</option>
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer bg-neutral-900">
+                                            <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                                    type="submit">Создать
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
 
@@ -139,8 +208,7 @@
                             <div class="flex-content mr-5 mb-3"
                                  style="max-width: 300px; min-width: 300px;"
                                  th:each="element: ${selled}">
-                                <div class="bg-gradient-to-tl from-green-400 to-indigo-800 rounded rounded-md py-1"
-                                >
+                                <div class="bg-gradient-to-tl from-green-400 to-indigo-800 rounded rounded-md py-1">
                                     <div class="card darken-1 bg-black bg-opacity-40 rounded rounded-md mx-2">
                                         <div class="card-content white-text">
                                             <span class="card-title">Краткое описание</span>
@@ -196,6 +264,23 @@
 </div>
 
 <script th:inline="javascript">
+
+    $('textarea[name="desc"]').keydown(function () {
+        var $this = $(this);
+
+        if ($this.val().length > 1499) {
+            $this.val($this.val().substring(0, 1499));
+        }
+    });
+
+    $('textarea[name="details"]').keydown(function () {
+        var $this = $(this);
+
+        if ($this.val().length > 499) {
+            $this.val($this.val().substring(0, 499));
+        }
+    });
+
     Highcharts.chart('sell-container', {
         chart: {
             backgroundColor: '#232323',

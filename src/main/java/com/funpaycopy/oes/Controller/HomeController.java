@@ -36,6 +36,8 @@ public class HomeController {
     @Autowired
     RequestMRGRepository requestMRGRepository;
     @Autowired
+    GoodsTypeRepository goodsTypeRepository;
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
@@ -199,6 +201,26 @@ public class HomeController {
         } catch (Exception e) {}
 
         return ("redirect:/");
+    }
+
+    @PostMapping("/item")
+    public String itemADD(Principal principal, @RequestParam String name, @RequestParam String desc, @RequestParam BigDecimal sum, @RequestParam String details, @RequestParam String type){
+
+        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        GoodsList goodsList = new GoodsList();
+
+        goodsList.setSeller(user);
+        goodsList.setSelled(false);
+        goodsList.setType(goodsTypeRepository.findById(type).orElseThrow());
+        goodsList.setGoodsName(name);
+        goodsList.setGoodsDesc(desc);
+        goodsList.setGoodsDetails(details);
+        goodsList.setGoodsCost(sum);
+
+        goodsListRepository.save(goodsList);
+
+        return ("redirect:/profile");
     }
 
     @GetMapping("/profile")
@@ -389,7 +411,7 @@ public class HomeController {
 
             String savePath = folderPath + "backup.sql";
 
-            String executeCmd = "mysqldump --column-statistics=0 -uroot " + dbName + " -r " + savePath;
+            String executeCmd = "mysqldump --port=3300 --column-statistics=0 -uroot " + dbName + " -r " + savePath;
 
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
             int processComplete = runtimeProcess.waitFor();
@@ -413,7 +435,7 @@ public class HomeController {
     public String restore(String dbName){
         try {
 
-            String executeCmd = "cmd.exe /c mysql -uroot " + dbName + " < " + System.getProperty("user.dir") + "\\backup\\backup.sql";
+            String executeCmd = "cmd.exe /c mysql --port=3300 -uroot " + dbName + " < " + System.getProperty("user.dir") + "\\backup\\backup.sql";
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
             int processComplete = runtimeProcess.waitFor();
 
@@ -499,5 +521,14 @@ public class HomeController {
 
 
         return ("redirect:/");
+    }
+
+    @GetMapping("/requests")
+    public String requestsView(Model model) {
+
+        List<RequestTS> requestTS =  requestTSRepository.findAllByEmployeeIsNull();
+
+        model.addAttribute("requestTS", requestTS);
+        return ("requests");
     }
 }

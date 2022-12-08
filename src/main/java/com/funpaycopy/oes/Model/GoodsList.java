@@ -19,7 +19,7 @@ public class GoodsList {
     private String goodsName;
 
     @NotBlank(message = "Не указано описание товара!")
-    @Size(max = 500, message = "Описание товара должно содержать не больше 500 символов!")
+    @Size(max = 1500, message = "Описание товара должно содержать не больше 500 символов!")
     private String goodsDesc;
 
     @NotBlank(message = "Не указаны реквизиты товара!")

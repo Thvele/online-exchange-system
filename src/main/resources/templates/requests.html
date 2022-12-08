@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Заявки</title>
+
+    <style>
+        .input-field input:focus {
+            border-bottom: 1px solid violet !important;
+            box-shadow: 0 1px 0 0 violet !important;
+            color: white !important;
+        }
+
+        .input-field input:focus + label {
+            color: white !important;
+        }
+
+        ul.dropdown-content.select-dropdown li span {
+            background: #1A1B1C;
+            color: white;
+        }
+
+        ul.dropdown-content.select-dropdown li span:hover {
+            background: rgb(115 115 115);
+        }
+    </style>
+</head>
+
+<div th:insert="fragments/header :: header"></div>
+
+<body class="bg-neutral-900 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
+<div class="cover-container p-3 flex-column">
+
+    <div class="bg-black bg-opacity-50 text-white rounded-xl">
+        <table class="table-auto">
+            <caption>
+                <div class="row">
+                    <form action="/reqsearch">
+                        <div class="input-field col s9">
+                            <input class="input-search" name="search" id="input-search" type="text"
+                                   th:value="${search}">
+                            <label for="input-search">Поиск</label>
+                        </div>
+                        <div class="input-field col s3">
+                            <div class="flex">
+                                <div class="col s9 w-full">
+                                    <select name="type" class="w-full">
+                                        <option value="">Тип заявки</option>
+                                        <option value="ts" th:selected="(${type} == 'ts')">Тех. поддержка</option>
+                                        <option value="mod" th:selected="(${type} == 'mod')">Модерация</option>
+                                    </select>
+                                </div>
+                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s3"
+                                        type="submit">Поиск
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </caption>
+            <thead>
+            <tr>
+                <th>Тип</th>
+                <th>Название</th>
+                <th>Покупатель</th>
+                <th>Продавец</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr class="opacity-50 hover:opacity-100" th:each="element: ${requestTS}">
+                <td><a class="font-bold h-full w-full"></a>Тех. поддержка</td>
+
+                <td><a class="font-bold h-full w-full" th:text="${element.getRequestName()}"></a></td>
+
+                <td><a class="hover:underline" th:text="${element.getBuy().getGoods().getSeller().login}"></a></td>
+
+                <td><a class="hover:underline" th:text="${element.getBuy().getBuyer().login}"></a></td>
+            </tr>
+            <tr class="opacity-50 hover:opacity-100" th:each="element: ${requestMRG}">
+                <td><a class="font-bold h-full w-full"></a>Модерация</td>
+
+                <td><a class="font-bold h-full w-full" th:text="${element.getRequestName()}"></a></td>
+
+                <td><a class="hover:underline" th:text="${element.getBuy().getGoods().getSeller().login}"></a></td>
+
+                <td><a class="hover:underline" th:text="${element.getBuy().getBuyer().login}"></a></td>
+            </tr>
+            </tbody>
+
+
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

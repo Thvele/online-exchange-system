@@ -71,8 +71,8 @@
                         </form>
 
                         <div id="moderator" class="col s12">
-                            <div class="input-field" sec:authorize="not hasAuthority('MODERATOR')"
-                                 style="margin-top: 2.5rem !important;" th:if="${requestSend} == false">
+                            <div class="input-field" sec:authorize="not hasAuthority('MODERATOR') && not hasAuthority('ADMIN')"
+                                 style="margin-top: 2.5rem !important;" th:if="not ${requestSend}">
                                 <form action="/modrights" method="post">
                                 <textarea name="desc" required class="materialize-textarea" style="min-height: 30vh"
                                           type="text"
@@ -91,13 +91,13 @@
                                 </form>
                             </div>
 
-                            <div sec:authorize="not hasAuthority('MODERATOR')" th:if="${requestSend} == true"
+                            <div sec:authorize="not hasAuthority('MODERATOR') && not hasAuthority('ADMIN')" th:if="${requestSend}"
                                  style="margin-top: 2.5rem !important;">
                                 <span disabled th:text="'Вы уже отправляли заявку!'"
                                       class="text-white mr-3 text-xl"></span>
                             </div>
 
-                            <div sec:authorize="hasAuthority('MODERATOR')" style="margin-top: 2.5rem !important;">
+                            <div sec:authorize="hasAuthority('MODERATOR')  || hasAuthority('ADMIN')" style="margin-top: 2.5rem !important;">
                             <span disabled th:text="'У вас уже есть права модератора!'"
                                   class="text-white mr-3 text-xl"></span>
                             </div>
