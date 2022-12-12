@@ -4,22 +4,7 @@
     <meta charset="UTF-8">
     <title>Покупки</title>
 
-    <style>
-        .input-field input:focus {
-            border-bottom: 1px solid violet !important;
-            box-shadow: 0 1px 0 0 violet !important;
-            color: white !important;
-        }
 
-        .input-field input:focus + label {
-            color: white !important;
-        }
-
-        ul.dropdown-content.select-dropdown li span {
-            background: #1A1B1C;
-            color: white;
-        }
-    </style>
 </head>
 
 <div th:insert="fragments/header :: header"></div>
@@ -57,32 +42,36 @@
             </caption>
             <thead th:if="${not buyList.isEmpty()}">
             <tr>
+                <th style="width: 110px">Номер покупки</th>
                 <th>Тип</th>
-                <th>Описание</th>
+                <th>Товар</th>
                 <th>Продавец</th>
                 <th style="min-width: 110px">Цена</th>
             </tr>
             </thead>
 
             <tbody th:if="${not buyList.isEmpty()}">
-            <div th:each="buy: ${buyList}">
-                <a href="#">
-                    <div>
-                        <tr class="opacity-50 hover:opacity-100">
-                            <td><a class="font-bold h-full w-full" th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
-                                   th:text="${buy.getGoods().getType().getTypeName()}"></a></td>
+            <tr class="opacity-50 hover:opacity-100 cursor-pointer" th:each="buy: ${buyList}">
+                <td><a class="font-bold block" style="word-break: break-all"
+                       th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
+                       th:text="${buy.getGoods().getIdGoods()}"></a></td>
 
-                            <td><a class="hover:underline" th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
-                                   th:text="${buy.getGoods().getGoodsName()}"></a></td>
+                <td><a class="font-bold block"
+                       th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
+                       th:text="${buy.getGoods().getType().getTypeName()}"></a></td>
 
-                            <td><a class="hover:underline" th:text="${buy.getGoods().getSeller().getLogin()}"
-                                   th:href="'profile/' +${buy.getGoods().getSeller().getIdUser()}"></a></td>
+                <td><a class="block" style="word-break: break-all"
+                       th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
+                       th:text="${buy.getGoods().getGoodsName()}"></a></td>
 
-                            <td th:text="${buy.getGoods().getGoodsCost()} + '₽'"></td>
-                        </tr>
-                    </div>
-                </a>
-            </div>
+                <td><a class="hover:underline block" style="word-break: break-all"
+                       th:text="${buy.getGoods().getSeller().getLogin()}"
+                       th:href="'profile/' +${buy.getGoods().getSeller().getIdUser()}"></a></td>
+
+                <td><a class="block" style="word-break: break-all"
+                       th:href="'buy/item/' + ${buy.getGoods().getIdGoods()}"
+                       th:text="${buy.getGoods().getGoodsCost()} + '₽'"></a></td>
+            </tr>
             </tbody>
 
             <tbody th:if="${buyList.isEmpty()}">

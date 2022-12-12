@@ -8,4 +8,6 @@ import java.util.List;
 public interface RequestTSRepository extends JpaRepository<RequestTS, Long> {
 
     List<RequestTS> findAllByEmployeeIsNull();
+    List<RequestTS> findAllByBuyBuyerLogin(String login);
+    List<RequestTS> findAllByEmployeeIsNullAndRequestNameContains(String name);
 }

@@ -3,11 +3,13 @@ package com.funpaycopy.oes.Controller;
 import com.funpaycopy.oes.Model.*;
 import com.funpaycopy.oes.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -40,12 +42,9 @@ public class HomeController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @GetMapping("/")
-    public String home(Model model, HttpServletResponse response, Principal principal) {
-
-        Iterable<GoodsList> goodsLists = goodsListRepository.findAllBySelledFalseOrderByIdGoodsDesc();
-
+    public void GetCookies(HttpServletResponse response, Principal principal){
         try{
+
             User user = userRepository.findByLoginAndActive(principal.getName(), true);
 
             Cookie cookie = new Cookie("uID", String.valueOf(user.getIdUser()));
@@ -66,48 +65,69 @@ public class HomeController {
             response.addCookie(cookie1);
             response.addCookie(cookie2);
             response.addCookie(cookie3);
-
         } catch (Exception e) {}
+    }
+
+    void GetGraphData(Model model, Long id) {
+
+        int buyAcc = 0;
+        int buyItem = 0;
+        int buyOther = 0;
+
+        int sellAcc = 0;
+        int sellItem = 0;
+        int sellOther = 0;
+
+        for (BuyList buy : buyListRepository.findAllByBuyerIdUserAndGoodsTypeTypeName(id, "Аккаунт")) buyAcc++;
+        for (BuyList buy : buyListRepository.findAllByBuyerIdUserAndGoodsTypeTypeName(id, "Предмет")) buyItem++;
+        for (BuyList buy : buyListRepository.findAllByBuyerIdUserAndGoodsTypeTypeName(id, "Прочее")) buyOther++;
+
+        model.addAttribute("buyAcc", buyAcc);
+        model.addAttribute("buyItem", buyItem);
+        model.addAttribute("buyOther", buyOther);
+
+        for (BuyList buy : buyListRepository.findAllByGoodsSellerIdUserAndGoodsTypeTypeName(id, "Аккаунт")) sellAcc++;
+        for (BuyList buy : buyListRepository.findAllByGoodsSellerIdUserAndGoodsTypeTypeName(id, "Предмет")) sellItem++;
+        for (BuyList buy : buyListRepository.findAllByGoodsSellerIdUserAndGoodsTypeTypeName(id, "Прочее")) sellOther++;
+
+        model.addAttribute("sellAcc", sellAcc);
+        model.addAttribute("sellItem", sellItem);
+        model.addAttribute("sellOther", sellOther);
+    }
+
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(1000000000);
+        return multipartResolver;
+    }
+
+    @GetMapping("/")
+    public String home(Model model, HttpServletResponse response, Principal principal) {
+
+        GetCookies(response, principal);
+
+        Iterable<GoodsList> goodsLists = goodsListRepository.findAllBySelledFalseOrderByIdGoodsDesc();
+
+        System.out.println("Отладка путём точек останова");
 
         model.addAttribute("goodsList", goodsLists);
         return ("home");
     }
 
     @GetMapping("/buy")
-    public String buyList(Principal principal, HttpServletResponse response, Model model) {
+    public String buyList(Model model, HttpServletResponse response, Principal principal) {
 
-        Iterable<BuyList> buyList = buyListRepository.findAllByBuyerLogin(principal.getName());
+        GetCookies(response, principal);
 
-        try{
-            User user = userRepository.findByLoginAndActive(principal.getName(), true);
-
-            Cookie cookie = new Cookie("uID", String.valueOf(user.getIdUser()));
-            Cookie cookie1 = new Cookie("uN", String.valueOf(user.getLogin()));
-            Cookie cookie2 = new Cookie("uP", String.valueOf(user.getProfilePhoto()));
-            Cookie cookie3 = new Cookie("uB", String.valueOf(user.getBalance()));
-            cookie.setSecure(true);
-            cookie1.setSecure(true);
-            cookie2.setSecure(true);
-            cookie3.setSecure(true);
-
-            cookie.setPath("/");
-            cookie1.setPath("/");
-            cookie2.setPath("/");
-            cookie3.setPath("/");
-
-            response.addCookie(cookie);
-            response.addCookie(cookie1);
-            response.addCookie(cookie2);
-            response.addCookie(cookie3);
-
-        } catch (Exception e) {}
+        Iterable<BuyList> buyList = buyListRepository.findAllByBuyerLoginOrderByBuyDateDesc(principal.getName());
 
         model.addAttribute("buyList", buyList);
         return ("buy");
     }
 
     @PostMapping("/buy/{id}")
-    public String buy(Principal principal, @PathVariable("id") Long id) {
+    public String buy(@PathVariable("id") Long id, Principal principal) {
 
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
         GoodsList goodsList = goodsListRepository.findByIdGoodsAndSelledFalse(id);
@@ -115,28 +135,33 @@ public class HomeController {
 
         if(user.getBalance().compareTo(goodsList.getGoodsCost()) >= 0){
 
-            user.setBalance(user.getBalance().subtract(goodsList.getGoodsCost()));
-            seller.setBalance(seller.getBalance().add(goodsList.getGoodsCost()));
-            goodsList.setSelled(true);
+            if(!goodsList.getSelled()) {
 
-            BuyList buyList = new BuyList();
-            buyList.setBuyer(user);
-            buyList.setGoods(goodsList);
-            buyList.setStatus(buyStatusRepository.findById("Получен").orElseThrow());
-            buyList.setBuyDate();
+                user.setBalance(user.getBalance().subtract(goodsList.getGoodsCost()));
+                seller.setBalance(seller.getBalance().add(goodsList.getGoodsCost()));
+                goodsList.setSelled(true);
 
-            buyListRepository.save(buyList);
-            userRepository.save(user);
-            userRepository.save(seller);
+                BuyList buyList = new BuyList();
+                buyList.setBuyer(user);
+                buyList.setGoods(goodsList);
+                buyList.setStatus(buyStatusRepository.findById("Получен").orElseThrow());
+                buyList.setBuyDate();
 
-            return ("redirect:/buy");
+                buyListRepository.save(buyList);
+                userRepository.save(user);
+                userRepository.save(seller);
+
+                return ("redirect:/buy");
+            }
         }
 
-        return ("redirect:/item/" + id);
+        return ("redirect:/");
     }
 
     @GetMapping("/search")
-    public String homeSearch(Model model, @RequestParam("search") String search, @RequestParam("type") String type){
+    public String homeSearch(HttpServletResponse response, Principal principal, Model model, @RequestParam("search") String search, @RequestParam("type") String type){
+
+        GetCookies(response, principal);
 
         Iterable<GoodsList> goodsLists = null;
 
@@ -156,7 +181,9 @@ public class HomeController {
     }
 
     @GetMapping("/searchBuy")
-    public String buySearch(Model model, @RequestParam("search") String search, @RequestParam("type") String type, Principal principal) {
+    public String buySearch(HttpServletResponse response, Principal principal, Model model, @RequestParam("search") String search, @RequestParam("type") String type) {
+
+        GetCookies(response, principal);
 
         Iterable<BuyList> buyList = null;
 
@@ -176,7 +203,9 @@ public class HomeController {
     }
 
     @GetMapping("/item/{id}")
-    public String goods(Model model, @PathVariable("id") Long id, Principal principal) {
+    public String goods(HttpServletResponse response, Principal principal, Model model, @PathVariable("id") Long id) {
+
+        GetCookies(response, principal);
 
         GoodsList goods = goodsListRepository.findById(id).orElseThrow();
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
@@ -188,7 +217,9 @@ public class HomeController {
     }
 
     @GetMapping("/buy/item/{id}")
-    public String byu(Model model, @PathVariable("id") Long id, Principal principal){
+    public String byu(HttpServletResponse response, Principal principal, Model model, @PathVariable("id") Long id){
+
+        GetCookies(response, principal);
 
         BuyList buyList = buyListRepository.findByGoodsIdGoodsAndBuyerLogin(id, principal.getName());
 
@@ -224,7 +255,9 @@ public class HomeController {
     }
 
     @GetMapping("/profile")
-    public String profileOwn(Model model, Principal principal) {
+    public String profileOwn(HttpServletResponse response, Principal principal, Model model) {
+
+        GetCookies(response, principal);
 
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
         List<GoodsList> goodsList = goodsListRepository.findAllBySellerIdUserAndSelled(user.getIdUser(), false);
@@ -239,7 +272,9 @@ public class HomeController {
     }
 
     @GetMapping("/profile/{id}")
-    public String profile(Model model, @PathVariable("id") Long id) {
+    public String profile(HttpServletResponse response, Principal principal, Model model, @PathVariable("id") Long id) {
+
+        GetCookies(response, principal);
 
         User user = userRepository.findById(id).orElseThrow();
         List<GoodsList> goodsList = goodsListRepository.findAllBySellerIdUserAndSelled(id, false);
@@ -253,33 +288,6 @@ public class HomeController {
         return ("profile");
     }
 
-    void GetGraphData(Model model, Long id) {
-
-        int buyAcc = 0;
-        int buyItem = 0;
-        int buyOther = 0;
-
-        int sellAcc = 0;
-        int sellItem = 0;
-        int sellOther = 0;
-
-        for (BuyList buy : buyListRepository.findAllByBuyerIdUserAndGoodsTypeTypeName(id, "Аккаунт")) buyAcc++;
-        for (BuyList buy : buyListRepository.findAllByBuyerIdUserAndGoodsTypeTypeName(id, "Предмет")) buyItem++;
-        for (BuyList buy : buyListRepository.findAllByBuyerIdUserAndGoodsTypeTypeName(id, "Прочее")) buyOther++;
-
-        model.addAttribute("buyAcc", buyAcc);
-        model.addAttribute("buyItem", buyItem);
-        model.addAttribute("buyOther", buyOther);
-
-        for (BuyList buy : buyListRepository.findAllByGoodsSellerIdUserAndGoodsTypeTypeName(id, "Аккаунт")) sellAcc++;
-        for (BuyList buy : buyListRepository.findAllByGoodsSellerIdUserAndGoodsTypeTypeName(id, "Предмет")) sellItem++;
-        for (BuyList buy : buyListRepository.findAllByGoodsSellerIdUserAndGoodsTypeTypeName(id, "Прочее")) sellOther++;
-
-        model.addAttribute("sellAcc", sellAcc);
-        model.addAttribute("sellItem", sellItem);
-        model.addAttribute("sellOther", sellOther);
-    }
-
     @GetMapping("/thanku")
     public String thankuView() {
 
@@ -287,7 +295,7 @@ public class HomeController {
     }
 
     @PostMapping("/thanku")
-    public String thanku(Model model, Principal principal, BigDecimal sum, String method) {
+    public String thanku(Principal principal, Model model, BigDecimal sum, String method) {
 
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
 
@@ -318,7 +326,9 @@ public class HomeController {
     }
 
     @GetMapping("/rights")
-    public String rightsView(Model model, Principal principal) {
+    public String rightsView(HttpServletResponse response, Principal principal, Model model) {
+
+        GetCookies(response, principal);
 
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
 
@@ -373,11 +383,13 @@ public class HomeController {
         requestMRG.setRequestMRGDesc(desc);
 
         requestMRGRepository.save(requestMRG);
-        return ("redirect:/");
+        return ("redirect:/rights");
     }
 
     @GetMapping("/support")
-    public String supportView(Model model, Principal principal) {
+    public String supportView(HttpServletResponse response, Principal principal, Model model) {
+
+        GetCookies(response, principal);
 
         model.addAttribute("buys", buyListRepository.findAllByBuyerLoginAndRequestTSNull(principal.getName()));
         return ("support");
@@ -398,7 +410,7 @@ public class HomeController {
 
         requestTSRepository.save(requestTS);
 
-        return ("redirect:/");
+        return ("redirect:/requests");
     }
 
     @GetMapping("/backup")
@@ -411,7 +423,7 @@ public class HomeController {
 
             String savePath = folderPath + "backup.sql";
 
-            String executeCmd = "mysqldump --port=3300 --column-statistics=0 -uroot " + dbName + " -r " + savePath;
+            String executeCmd = "mysqldump --column-statistics=0 -uroot " + dbName + " -r " + savePath;
 
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
             int processComplete = runtimeProcess.waitFor();
@@ -435,7 +447,7 @@ public class HomeController {
     public String restore(String dbName){
         try {
 
-            String executeCmd = "cmd.exe /c mysql --port=3300 -uroot " + dbName + " < " + System.getProperty("user.dir") + "\\backup\\backup.sql";
+            String executeCmd = "cmd.exe /c mysql -uroot " + dbName + " < " + System.getProperty("user.dir") + "\\backup\\backup.sql";
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
             int processComplete = runtimeProcess.waitFor();
 
@@ -451,39 +463,49 @@ public class HomeController {
     }
 
     @GetMapping("/profileEDT")
-    public String editView(Model model, Principal principal) {
+    public String editView(HttpServletResponse response, Principal principal, Model model) {
+
+        GetCookies(response, principal);
 
         model.addAttribute("user", userRepository.findByLoginAndActive(principal.getName(), true));
         return ("profileEDT");
     }
 
     @PostMapping("/profileEDT")
-    public String edit(Model model, Principal principal, @RequestParam String email, @RequestParam String pass, @RequestParam(required = false) String newPass, @RequestParam(required = false) String reNewPass) {
+    public String edit(Principal principal, Model model, @RequestParam String email, @RequestParam String pass, @RequestParam(required = false) String newPass, @RequestParam(required = false) String reNewPass) {
 
         User user = userRepository.findByLoginAndActive(principal.getName(), true);
 
-        if(passwordEncoder.matches(pass, user.getPassword())) {
+        if(userRepository.findByEmail(email) == null) {
 
-            user.setEmail(email);
+            if(passwordEncoder.matches(pass, user.getPassword())) {
 
-            if(!newPass.isEmpty() && !reNewPass.isEmpty()){
+                user.setEmail(email);
 
-                if(newPass.equals(reNewPass)) {
+                if(!newPass.isEmpty() && !reNewPass.isEmpty()){
 
-                    user.setPassword(passwordEncoder.encode(newPass));
-                } else {
+                    if(newPass.equals(reNewPass)) {
 
-                    model.addAttribute("exception", "Пароли не совпадают");
-                    model.addAttribute("user", user);
-                    return ("profileEDT");
+                        user.setPassword(passwordEncoder.encode(newPass));
+                    } else {
+
+                        model.addAttribute("exception", "Пароли не совпадают");
+                        model.addAttribute("user", user);
+                        return ("profileEDT");
+                    }
                 }
-            }
 
-            userRepository.save(user);
-            return ("redirect:/");
+                userRepository.save(user);
+                return ("redirect:/profileEDT");
+            } else {
+
+                model.addAttribute("exception", "Неверный пароль");
+                model.addAttribute("user", user);
+                return ("profileEDT");
+            }
         } else {
 
-            model.addAttribute("exception", "Неверный пароль");
+            model.addAttribute("exception", "Почта уже используется");
             model.addAttribute("user", user);
             return ("profileEDT");
         }
@@ -507,9 +529,13 @@ public class HomeController {
 
         try{
 
-            String folderPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\usericons\\";
-            File temp = new File(folderPath + user.getLogin() + photo.getOriginalFilename());
-            photo.transferTo(temp);
+            byte b[] = photo.getBytes();
+            String folderPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\usericons\\" + user.getLogin() + photo.getOriginalFilename();
+            System.out.println(folderPath);
+
+            FileOutputStream fos = new FileOutputStream(folderPath);
+            fos.write(b);
+            fos.close();
 
             user.setProfilePhoto("/usericons/" + user.getLogin() + photo.getOriginalFilename());
 
@@ -524,11 +550,178 @@ public class HomeController {
     }
 
     @GetMapping("/requests")
-    public String requestsView(Model model) {
+    public String requestsView(HttpServletResponse response, Principal principal, Model model) {
+
+        GetCookies(response, principal);
 
         List<RequestTS> requestTS =  requestTSRepository.findAllByEmployeeIsNull();
+        List<RequestMRG> requestMRG = requestMRGRepository.findAllByClosedFalse();
 
         model.addAttribute("requestTS", requestTS);
+        model.addAttribute("requestMRG", requestMRG);
         return ("requests");
+    }
+
+    @GetMapping("/tssearch")
+    public String tsSearch(HttpServletResponse response, Principal principal, Model model, @RequestParam String search) {
+
+        GetCookies(response, principal);
+
+        List<RequestTS> requestTS =  requestTSRepository.findAllByEmployeeIsNullAndRequestNameContains(search);
+        List<RequestMRG> requestMRG = requestMRGRepository.findAllByClosedFalse();
+
+        model.addAttribute("requestTS", requestTS);
+        model.addAttribute("requestMRG", requestMRG);
+        model.addAttribute("tssearch", search);
+
+        return ("requests");
+    }
+
+    @GetMapping("/modsearch")
+    public String mrgSearch(HttpServletResponse response, Principal principal, Model model, @RequestParam String search) {
+
+        GetCookies(response, principal);
+
+        List<RequestTS> requestTS =  requestTSRepository.findAllByEmployeeIsNull();
+        List<RequestMRG> requestMRG = requestMRGRepository.findAllByUserLoginContainsAndClosedFalse(search);
+
+        model.addAttribute("requestTS", requestTS);
+        model.addAttribute("requestMRG", requestMRG);
+        model.addAttribute("modsearch", search);
+
+        return ("requests");
+    }
+
+    @GetMapping("/myrequests")
+    public String myRequestsView(HttpServletResponse response, Principal principal, Model model) {
+
+        GetCookies(response, principal);
+
+        List<RequestTS> requestTS = requestTSRepository.findAllByBuyBuyerLogin(principal.getName());
+        List<RequestMRG> requestMRG = requestMRGRepository.findAllByUserLogin(principal.getName());
+
+        model.addAttribute("requestTS", requestTS);
+        model.addAttribute("requestMRG", requestMRG);
+        return ("requests");
+    }
+
+    @PostMapping("/tsdecline")
+    public String tsRequestDecline(Principal principal, @RequestParam Long id) {
+
+        User employee = userRepository.findByLoginAndActive(principal.getName(), true);
+        RequestTS request = requestTSRepository.findById(id).orElseThrow();
+
+        request.setEmployee(employee);
+        request.setRequestStatus(requestTsStatusRepository.findById("Отклонено").orElseThrow());
+
+        requestTSRepository.save(request);
+
+        return ("redirect:/requests");
+    }
+
+    @PostMapping("/tsrefund")
+    public String tsRequestRefund(Principal principal, @RequestParam Long id) {
+
+        User employee = userRepository.findByLoginAndActive(principal.getName(), true);
+        RequestTS request = requestTSRepository.findById(id).orElseThrow();
+
+        request.setEmployee(employee);
+        request.setRequestStatus(requestTsStatusRepository.findById("Закрыто").orElseThrow());
+
+        User buyer = request.getBuy().getBuyer();
+        User seller = request.getBuy().getGoods().getSeller();
+        BuyList buy = request.getBuy();
+
+        seller.setBalance(seller.getBalance().subtract(request.getBuy().getGoods().getGoodsCost()));
+        buyer.setBalance(buyer.getBalance().add(request.getBuy().getGoods().getGoodsCost()));
+        buy.setStatus(buyStatusRepository.findById("Возврат").orElseThrow());
+
+        requestTSRepository.save(request);
+        buyListRepository.save(buy);
+        userRepository.save(buyer);
+        userRepository.save(seller);
+
+        return ("redirect:/requests");
+    }
+
+    @PostMapping("/mrgdecline")
+    public String mrgRequestDecline(Principal principal, @RequestParam Long id) {
+
+        RequestMRG request = requestMRGRepository.findById(id).orElseThrow();
+
+        request.setClosed(true);
+        requestMRGRepository.save(request);
+
+        return ("redirect:/requests");
+    }
+
+    @PostMapping("/mrgaccept")
+    public String megRequestAccept(Principal principal, @RequestParam Long id) {
+
+        RequestMRG request = requestMRGRepository.findById(id).orElseThrow();
+        User user = request.getUser();
+
+        Object[] roles = user.getRoles().toArray();
+
+        user.getRoles().clear();
+
+        for(Object role : roles) {
+
+            user.getRoles().add(Role.valueOf(role.toString()));
+        }
+        user.getRoles().add(Role.MODERATOR);
+
+        request.setClosed(true);
+
+        requestMRGRepository.save(request);
+        userRepository.save(user);
+
+        return ("redirect:/requests");
+    }
+
+    @GetMapping("/users")
+    public String usersView(Model model, Principal principal) {
+
+        model.addAttribute( "usersList" ,userRepository.findAllByLoginNot(principal.getName()));
+
+        return ("users");
+    }
+
+    @GetMapping("/usearch")
+    public String usersSearch(Model model, Principal principal, @RequestParam String search) {
+
+        model.addAttribute("search", search);
+        model.addAttribute("usersList", userRepository.findAllByLoginContainsAndLoginNot(search, principal.getName()));
+
+        return ("users");
+    }
+
+    @PostMapping("/busers/{id}")
+    public String blockUser(@PathVariable("id") Long id) {
+
+        User user = userRepository.findById(id).orElseThrow();
+
+        if(user.getActive()){
+            user.setActive(false);
+
+            userRepository.save(user);
+
+            return ("redirect:/users");
+        } else {
+
+            user.setActive(true);
+
+            userRepository.save(user);
+
+            return ("redirect:/users");
+        }
+
+    }
+
+    @PostMapping("/dusers/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
+
+        userRepository.deleteById(id);
+        return ("redirect:/users");
     }
 }

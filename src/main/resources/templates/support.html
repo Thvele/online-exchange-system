@@ -3,42 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Поддержка</title>
-
-    <style>
-        .input-field textarea:focus {
-            border-bottom: 1px solid violet !important;
-            box-shadow: 0 1px 0 0 violet !important;
-            color: white !important;
-        }
-
-        .input-field textarea:focus + label {
-            color: white !important;
-        }
-
-        .input-field input:focus {
-            border-bottom: 1px solid violet !important;
-            box-shadow: 0 1px 0 0 violet !important;
-            color: white !important;
-        }
-
-        .input-field input:focus + label {
-            color: white !important;
-        }
-
-        .tabs .tab a {
-
-            color: #FFFFFF !important;
-        }
-
-        ul.dropdown-content.select-dropdown li span {
-            background: #1A1B1C;
-            color: white;
-        }
-
-        ul.dropdown-content.select-dropdown li span:hover {
-            background: rgb(115 115 115);
-        }
-    </style>
 </head>
 <body class="text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
 
@@ -97,17 +61,24 @@
                             <div class="col s12 input-field" style="margin-top: 2.5rem !important;">
                                 <form action="/support" method="post">
                                     <div class="row">
-                                        <input required name="name" class="col s7" type="text" minlength="1" placeholder="Название темы: [Номер заказа] Продавец, Кратко проблема">
+                                        <input required name="name" class="col s7" type="text" minlength="1"
+                                               placeholder="Название темы: [Номер заказа] Продавец, Кратко проблема">
                                         <div class="col s5 w-full">
                                             <select id="select-buy" name="buyId" class="w-full">
                                                 <option value="">Выберите покупку</option>
-                                                <div th:each="el: ${buys}"><option th:value="${el.getIdBuy()}" th:text="${el.getGoods().getGoodsName()}" ></option></div>
+                                                <div th:each="el: ${buys}">
+                                                    <option th:value="${el.getIdBuy()}"
+                                                            th:text="${el.getGoods().getGoodsName()}"></option>
+                                                </div>
                                             </select>
                                         </div>
                                     </div>
-                                    <textarea required name="desc" class="materialize-textarea" style="min-height: 30vh" minlength="1" type="text"
+                                    <textarea required name="desc" class="materialize-textarea" style="min-height: 30vh"
+                                              minlength="1" type="text"
                                               placeholder="1) Ник продавца: *текст* &#10;2) Номер заказа: *текст* &#10;3) Как с вами связаться ( ссылка на страницу VK или discord ): *текст*&#10;4) Видео (одно единственное) вашей покупки и проверки,только в онлайн просмотре на ютубе, яндексе и прочих сайтах,скачивать ваше видео на комп не кто не будет и только на весь экран, без остановок и во весь экран (без док-в жалоба не рассматривается,вы получаете отказ,исключение - признание своей вины продавцом.) &#10;5) Подробное описание проблемы: *текст*"></textarea>
-                                    <button id="req-send" type="submit" class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white" disabled>
+                                    <button data-target="ts-send" id="req-send" type="button"
+                                       class="btn rounded waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white modal-trigger"
+                                       disabled>
                                         Отправить
                                     </button>
 
@@ -118,8 +89,24 @@
                                                                                             2) Номер заказа: *текст* <br/>
                                                                                             3) Как с вами связаться ( ссылка на страницу VK или discord ): *текст* <br/>
                                                                                             4) Видео (одно единственное) вашей покупки и проверки,только в онлайн просмотре на ютубе,<br/>яндексе и прочих сайтах,скачивать ваше видео на комп не кто не будет и только на весь экран,<br/>без остановок и во весь экран (без док-в жалоба не рассматривается,вы получаете отказ,исключение - признание своей вины продавцом.) <br/>
-                                                                                            5) Подробное описание проблемы: *текст*">?
+                                                                                            5) Подробное описание проблемы: *текст*">
+                                        ?
                                     </button>
+
+                                    <div id="ts-send" class="modal bg-neutral-900">
+                                        <div class="modal-content">
+                                            <span class="text-center text-white">После отправки запроса изменить его будет невозможно, продолжить?</span>
+                                        </div>
+                                        <div class="modal-footer bg-neutral-900">
+                                            <button class="modal-close btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                                    type="button">Отмена
+                                            </button>
+                                            <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white"
+                                                    type="submit">Да
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </form>
                             </div>
                         </div>
@@ -136,7 +123,7 @@
 
     select.addEventListener('change', function () {
 
-        if(select.value == '') {
+        if (select.value === '') {
 
             button.disabled = true;
         } else {
@@ -145,7 +132,7 @@
         }
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         $('select').formSelect();
     });
 </script>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи</title>
+</head>
+
+<div th:insert="fragments/header :: header"></div>
+
+<body class="bg-neutral-900 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
+<div class="cover-container p-3 flex-column">
+
+    <div class="bg-black bg-opacity-50 text-white rounded-xl">
+        <table class="table-auto">
+            <caption>
+                <div class="row">
+                    <form action="/usearch">
+                        <div class="input-field col s12 flex">
+                            <input class="input-search" name="search" id="input-search" type="text"
+                                   th:value="${search}">
+                            <label for="input-search">Поиск</label>
+                            <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s1"
+                                    type="submit">Поиск
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </caption>
+            <thead th:if="${not usersList.isEmpty()}">
+            <tr>
+                <th style="max-width: 10px">ID</th>
+                <th>Логин</th>
+                <th>Почта</th>
+                <th>Роли</th>
+                <th>Баланс</th>
+                <th class="text-center">Действия</th>
+            </tr>
+            </thead>
+
+            <tbody th:if="${not usersList.isEmpty()}">
+            <tr class="opacity-50 hover:opacity-100 cursor-pointer" th:each="user: ${usersList}">
+                <td><a class="font-bold block"
+                       th:href="'/profile/' + ${user.idUser}"
+                       th:text="${user.idUser}"></a></td>
+
+                <td><a class="block" style="word-break: break-all"
+                       th:href="'/profile/' + ${user.idUser}"
+                       th:text="${user.login}"></a></td>
+
+                <td><a class="block" style="word-break: break-all"
+                       th:href="'/profile/' + ${user.idUser}"
+                       th:text="${user.email}"></a></td>
+
+                <td><a class="block"
+                       th:href="'/profile/' + ${user.idUser}"
+                       th:text="${user.roles}"></a></td>
+
+                <td><a class="block"
+                       th:href="'/profile/' + ${user.idUser}"
+                       th:text="${user.balance} + '₽'"></a></td>
+
+                <td class="text-center">
+                    <div class="row">
+                        <form id="busers-form" th:action="'/busers/' + ${user.idUser}" method="post" class="col s6">
+                            <a onclick="document.getElementById('busers-form').submit();"><i class="material-icons text-green-600 tooltipped" data-position="top" data-tooltip="Заблокировать пользователя" th:if="${user.active}">check_circle</i></a>
+                            <a onclick="document.getElementById('busers-form').submit();"><i class="material-icons text-red-600 tooltipped" data-position="top" data-tooltip="Разблокировать пользователя"  th:if="not ${user.active}">do_not_disturb_on</i></a>
+                        </form>
+
+                        <form id="dusers-form" th:action="'/dusers/' + ${user.idUser}" method="post" class="col s6">
+                            <a onclick="document.getElementById('dusers-form').submit();"><i class="material-icons text-red-600 tooltipped" data-position="top" data-tooltip="Удалить пользователя" >delete_forever</i></a>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+
+            <tbody th:if="${usersList.isEmpty()}">
+            <tr>
+                <td colspan="6" class="text-center font-bold text-3xl">Ничего не найдено!</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

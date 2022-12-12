@@ -3,6 +3,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="/css/materialize/css/materialize.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/own.css" rel="stylesheet">
 
     <header style="font-family: 'Century Gothic';">
 
@@ -19,20 +20,23 @@
                         <li>
                             <a href="/" class="block px-2 text-gray-400 hover:text-white">Главная</a>
                         </li>
-                        <li sec:authorize="not hasAnyAuthority('ADMIN','MODERATOR')">
+                        <li sec:authorize="isAuthenticated()">
                             <a href="/support" class="block px-2 text-gray-400 hover:text-white">Поддержка</a>
                         </li>
-                        <li sec:authorize="not hasAnyAuthority('ADMIN','MODERATOR')">
+                        <li sec:authorize="isAuthenticated()">
                             <a href="/rights" class="block px-2 text-gray-400 hover:text-white">Повышение прав</a>
                         </li>
                         <li sec:authorize="hasAnyAuthority('ADMIN','MODERATOR')">
                             <a href="/requests" class="block px-2 text-gray-400 hover:text-white">Заявки</a>
                         </li>
                         <li sec:authorize="hasAuthority('ADMIN')">
-                            <a id="backup" class="block px-2 text-red-600 hover:text-white cursor-pointer">Резервное копирование</a>
+                            <a href="/users" class="block px-2 text-gray-400 hover:text-white">Пользователи</a>
                         </li>
                         <li sec:authorize="hasAuthority('ADMIN')">
-                            <a id="restore" class="block px-2 text-red-600 hover:text-white cursor-pointer">Восстановление</a>
+                            <a id="backup" class="block px-2 text-red-600 hover:text-white cursor-pointer">Резервное копирование БД</a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ADMIN')">
+                            <a id="restore" class="block px-2 text-red-600 hover:text-white cursor-pointer">Восстановление БД</a>
                         </li>
                     </ul>
                 </div>
@@ -53,16 +57,16 @@
                                    href="/profileEDT">Настройки профиля</a></li>
                             <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
                                    style="color: white !important; font-size: 0.9rem !important;"
-                                   href="/buy">Покупки</a></li>
+                                   href="/buy">Мои покупки</a></li>
                             <li><a class="waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900"
                                    style="color: white !important; font-size: 0.9rem !important;"
-                                   href="/requests" >Заявки</a></li>
+                                   href="/requests" >Мои заявки</a></li>
 
                             <li class="divider bg-neutral-800" tabindex="-1"></li>
 
                             <li><a class="waves-effect waves-light modal-trigger bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 focus:text-black"
                                    style="color: white !important; font-size: 0.9rem !important;"
-                                   id="userB" href="#balance"></a></li>
+                                   id="userB" href="#balance">Баланс: </a></li>
 
                             <li class="divider bg-neutral-800" tabindex="-1"></li>
 

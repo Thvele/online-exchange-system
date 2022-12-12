@@ -42,21 +42,26 @@ public class AuthController {
         }
 
         try {
-            if (userRepository.findByLoginAndActive(user_.getLogin(), true) == null) {
+            if (userRepository.findByLogin(user_.getLogin()) == null) {
 
-                User user = new User();
+                if(userRepository.findByEmail(user_.getEmail()) == null) {
 
-                user.setLogin(user_.getLogin());
-                user.setPassword(passwordEncoder.encode(user_.getPassword()));
-                user.setEmail(user_.getEmail());
+                    User user = new User();
 
-                user.setRoles(Collections.singleton(Role.USER));
-                user.setProfilePhoto("/usericons/def.jpg");
+                    user.setLogin(user_.getLogin());
+                    user.setPassword(passwordEncoder.encode(user_.getPassword()));
+                    user.setEmail(user_.getEmail());
 
-                user.setBalance(BigDecimal.valueOf(0.00));
-                user.setActive(true);
+                    user.setRoles(Collections.singleton(Role.USER));
+                    user.setProfilePhoto("/usericons/def.jpg");
 
-                userRepository.save(user);
+                    user.setBalance(BigDecimal.valueOf(0.00));
+                    user.setActive(true);
+
+                    userRepository.save(user);
+                } else {
+                    throw new Exception("Почта уже используется!");
+                }
             } else {
                 throw new Exception("Пользователь уже есть в системе!");
             }

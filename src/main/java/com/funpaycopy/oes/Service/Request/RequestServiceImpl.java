@@ -96,6 +96,7 @@ public class RequestServiceImpl implements RequestService{
 
         requestMRG_.setRequestMRGDesc(requestMRG.getRequestMRGDesc());
         requestMRG_.setUser(requestMRG.getUser());
+        requestMRG_.setClosed(requestMRG.getClosed());
 
         requestMRGRepository.save(requestMRG_);
         return requestMRG_;

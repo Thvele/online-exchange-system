@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Заявки</title>
@@ -30,68 +30,339 @@
 
 <body class="bg-neutral-900 text-bg-dark min-h-screen" style="font-family: 'Century Gothic'; background: #232323">
 <div class="cover-container p-3 flex-column">
-
     <div class="bg-black bg-opacity-50 text-white rounded-xl">
-        <table class="table-auto">
-            <caption>
-                <div class="row">
-                    <form action="/reqsearch">
-                        <div class="input-field col s9">
-                            <input class="input-search" name="search" id="input-search" type="text"
-                                   th:value="${search}">
-                            <label for="input-search">Поиск</label>
-                        </div>
-                        <div class="input-field col s3">
-                            <div class="flex">
-                                <div class="col s9 w-full">
-                                    <select name="type" class="w-full">
-                                        <option value="">Тип заявки</option>
-                                        <option value="ts" th:selected="(${type} == 'ts')">Тех. поддержка</option>
-                                        <option value="mod" th:selected="(${type} == 'mod')">Модерация</option>
-                                    </select>
+        <div class="row" sec:authorize="hasAnyAuthority('ADMIN','MODERATOR')">
+            <div class="col s12">
+                <ul class="tabs bg-neutral-900">
+                    <li class="tab col s6"><a class="active" href="#ts_req">Тех. поддержка</a></li>
+                    <li class="tab col s6"><a href="#mod_req">Запросы на получение прав модератора</a></li>
+                </ul>
+            </div>
+
+            <div id="ts_req">
+                <table class="table-auto">
+                    <caption>
+                        <div class="row">
+                            <form action="/tssearch">
+                                <div class="input-field col s12 flex">
+                                    <input class="input-tssearch" name="search" id="input-tssearch" type="text"
+                                           th:value="${tssearch}">
+                                    <label for="input-tssearch">Поиск</label>
+                                    <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s1"
+                                            type="submit">Поиск
+                                    </button>
                                 </div>
-                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s3"
-                                        type="submit">Поиск
-                                </button>
-                            </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
-            </caption>
-            <thead>
-            <tr>
-                <th>Тип</th>
-                <th>Название</th>
-                <th>Покупатель</th>
-                <th>Продавец</th>
-            </tr>
-            </thead>
+                    </caption>
+                    <thead th:if="not ${requestTS.isEmpty()}">
+                    <tr>
+                        <th>Название</th>
+                        <th>Товар</th>
+                        <th>Покупатель</th>
+                        <th>Продавец</th>
+                    </tr>
+                    </thead>
 
-            <tbody>
-            <tr class="opacity-50 hover:opacity-100" th:each="element: ${requestTS}">
-                <td><a class="font-bold h-full w-full"></a>Тех. поддержка</td>
+                    <tbody th:if="not ${requestTS.isEmpty()}">
+                    <tr class="opacity-50 hover:opacity-100 cursor-pointer" th:each="element: ${requestTS}">
 
-                <td><a class="font-bold h-full w-full" th:text="${element.getRequestName()}"></a></td>
+                        <td><a class="font-bold block modal-trigger"
+                               th:text="${element.getRequestName()}"
+                               th:href="'#tsrequest'"></a></td>
 
-                <td><a class="hover:underline" th:text="${element.getBuy().getGoods().getSeller().login}"></a></td>
+                        <td><a class="font-bold block modal-trigger"
+                               th:text="${element.getBuy().getGoods().getGoodsName()}"
+                               th:href="'#tsrequest'"></a></td>
 
-                <td><a class="hover:underline" th:text="${element.getBuy().getBuyer().login}"></a></td>
-            </tr>
-            <tr class="opacity-50 hover:opacity-100" th:each="element: ${requestMRG}">
-                <td><a class="font-bold h-full w-full"></a>Модерация</td>
+                        <td><a class="font-bold block modal-trigger"
+                               th:text="${element.getBuy().getBuyer().login}"
+                               th:href="'#tsrequest'"></a></td>
 
-                <td><a class="font-bold h-full w-full" th:text="${element.getRequestName()}"></a></td>
+                        <td><a class="font-bold block modal-trigger"
+                               th:text="${element.getBuy().getGoods().getSeller().login}"
+                               th:href="'#tsrequest'"></a></td>
 
-                <td><a class="hover:underline" th:text="${element.getBuy().getGoods().getSeller().login}"></a></td>
+                        <td><a class="block modal-trigger"
+                               th:text="${element.getRequestStatus().requestStatus}"
+                               th:href="'#tsrequest'"></a></td>
 
-                <td><a class="hover:underline" th:text="${element.getBuy().getBuyer().login}"></a></td>
-            </tr>
-            </tbody>
+                        <div id="tsrequest" class="modal bg-neutral-900" style="height: 100%">
+                            <form method="post">
+                                <div>
+                                    <div class="modal-content">
+                                        <div id="input" class="col s12">
+                                            <div class="input-field">
+                                                <input class="input-input text-white" name="id" id="input-num"
+                                                       type="text" autocomplete="off" readonly
+                                                       th:value="${element.getIdRequestTS()}">
+                                                <label for="input-num">Номер заявки</label>
+                                            </div>
+                                            <div class="input-field">
+                                                <input class="input-input text-white" name="name" id="input-name"
+                                                       type="text" autocomplete="off" readonly
+                                                       th:value="${element.getRequestName()}">
+                                                <label for="input-name">Название</label>
+                                            </div>
+                                            <div class="input-field">
+                                                <textarea class="materialize-textarea text-white" name="desc"
+                                                          id="textarea-desc"
+                                                          type="text" autocomplete="off" readonly
+                                                          th:text="${element.getRequestDesc()}"></textarea>
+                                                <label for="textarea-desc">Описание</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <span>Покупатель: </span>
+                                                </div>
+                                                <div class="col s6">
+                                                    <a class="font-bold hover:underline" style="word-break: break-all;"
+                                                       th:href="'/profile/' + ${element.getBuy().getBuyer().idUser}"
+                                                       th:text="${element.getBuy().getBuyer().login}"></a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <span>Продавец: </span>
+                                                </div>
+                                                <div class="col s6">
+                                                    <a class="font-bold hover:underline" style="word-break: break-all;"
+                                                       th:href="'/profile/' + ${element.getBuy().getBuyer().idUser}"
+                                                       th:text="${element.getBuy().getGoods().getSeller().login}"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-neutral-900">
+                                        <div class="row">
+                                            <div class="col s6">
+                                                <button class="modal-close btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-red-600"
+                                                        type="submit" formaction="/tsdecline">Отклонить
+                                                </button>
+                                            </div>
+                                            <div class="col s6">
+                                                <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white text-green-600"
+                                                        type="submit" formaction="/tsrefund">Вернуть деньги пользователю
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
 
+                    </tr>
+                    </tbody>
 
-        </table>
+                    <tbody th:if="${requestTS.isEmpty()}">
+                    <tr>
+                        <td colspan="4" class="text-center font-bold text-3xl">Заявок пока нет!</td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div id="mod_req">
+                <table class="table-auto">
+                    <caption>
+                        <div class="row">
+                            <form action="/modsearch">
+                                <div class="input-field col s12 flex">
+                                    <input class="input-modsearch" name="search" id="input-modsearch" type="text"
+                                           th:value="${modsearch}">
+                                    <label for="input-modsearch">Поиск</label>
+                                    <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s1"
+                                            type="submit">Поиск
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </caption>
+                    <thead th:if="not ${requestMRG.isEmpty()}">
+                    <tr>
+                        <th>Тип</th>
+                        <th>Пользователь</th>
+                        <th>Статус</th>
+                    </tr>
+                    </thead>
+
+                    <tbody sec:authorize="hasAuthority('ADMIN')" th:if="not ${requestMRG.isEmpty()}">
+                    <tr class="opacity-50 hover:opacity-100" th:each="element: ${requestMRG}">
+                        <td><a class="font-bold block modal-trigger"
+                               th:href="'#mrgrequest'"></a>Модерация</td>
+
+                        <td><a class="hover block modal-trigger"
+                               th:text="${element.getUser().login}"
+                               th:href="'#mrgrequest'"></a></td>
+                        <td>
+                            <a class="hover block modal-trigger" th:if="not ${element.getClosed()}" th:href="'#mrgrequest'">На рассмотрении</a>
+                            <a class="hover block modal-trigger" th:if="${element.getClosed()}" th:href="'#mrgrequest'">Закрыто</a>
+                        </td>
+
+                        <div id="mrgrequest" class="modal bg-neutral-900" style="height: 100%">
+                            <form method="post">
+                                <div>
+                                    <div class="modal-content">
+                                        <div id="input" class="col s12">
+                                            <div class="input-field">
+                                                <input class="input-input text-white" name="id" id="input-num"
+                                                       type="text" autocomplete="off" readonly
+                                                       th:value="${element.getIdRequestMRG()}">
+                                                <label for="input-num">Номер заявки</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s6">
+                                                    <span>Пользователь: </span>
+                                                </div>
+                                                <div class="col s6">
+                                                    <a class="font-bold hover:underline" style="word-break: break-all;"
+                                                       th:href="'/profile/' + ${element.getUser().idUser}"
+                                                       th:text="${element.getUser().login}"></a>
+                                                </div>
+                                            </div>
+                                            <div class="input-field">
+                                                <textarea class="materialize-textarea text-white" name="desc"
+                                                          id="textarea-desc"
+                                                          type="text" autocomplete="off" readonly
+                                                          th:text="${element.getRequestMRGDesc()}"></textarea>
+                                                <label for="textarea-desc">Описание</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-neutral-900">
+                                        <div class="row">
+                                            <div class="col s6">
+                                                <button class="modal-close btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-red-600"
+                                                        type="submit" formaction="/mrgdecline">Отклонить
+                                                </button>
+                                            </div>
+                                            <div class="col s6">
+                                                <button class="btn-flat waves-effect waves-light bg-neutral-900 hover:bg-neutral-700 focus:bg-neutral-900 text-white text-green-600"
+                                                        type="submit" formaction="/mrgaccept">Принять
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </tr>
+                    </tbody>
+
+                    <tbody sec:authorize="hasAuthority('ADMIN')" th:if="${requestMRG.isEmpty()}">
+                    <tr>
+                        <td colspan="4" class="text-center font-bold text-3xl">Заявок пока нет!</td>
+                    </tr>
+                    </tbody>
+
+                    <tbody sec:authorize="not hasAuthority('ADMIN')" th:if="${requestMRG.isEmpty()}">
+                    <tr>
+                        <td colspan="4" class="text-center font-bold text-3xl">У вас нет прав!</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row" sec:authorize="not hasAnyAuthority('ADMIN','MODERATOR')">
+            <div class="col s12">
+                <ul class="tabs bg-neutral-900">
+                    <li class="tab col s6"><a class="active" href="#ts_req">Тех. поддержка</a></li>
+                    <li class="tab col s6"><a href="#mod_req">Запросы на получение прав модератора</a></li>
+                </ul>
+            </div>
+
+            <div id="ts_req">
+                <table class="table-auto">
+                    <caption>
+                        <div class="row">
+                            <form action="/tssearch">
+                                <div class="input-field col s12 flex">
+                                    <input class="input-tssearch" name="search" id="input-tssearch" type="text"
+                                           th:value="${tssearch}">
+                                    <label for="input-tssearch">Поиск</label>
+                                    <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s1"
+                                            type="submit">Поиск
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th>Тип</th>
+                        <th>Название</th>
+                        <th>Товар</th>
+                        <th>Покупатель</th>
+                        <th>Продавец</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr class="opacity-50 hover:opacity-100 cursor-pointer" th:each="element: ${requestTS}">
+                        <td><a class="font-bold block"></a>Тех. поддержка</td>
+
+                        <td><a class="font-bold block"
+                               th:text="${element.getRequestName()}"></a></td>
+
+                        <td><a class="font-bold block"
+                               th:text="${element.getBuy().getGoods().getGoodsName()}"></a></td>
+
+                        <td><a class="hover:underline block"
+                               th:text="${element.getBuy().getBuyer().login}"></a></td>
+
+                        <td><a class="hover:underline block"
+                               th:text="${element.getBuy().getGoods().getSeller().login}"></a></td>
+
+                        <td><a class="hover:underline block"
+                               th:text="${element.getRequestStatus().requestStatus}"></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="mod_req">
+                <table class="table-auto">
+                    <caption>
+                        <div class="row">
+                            <form action="/modsearch">
+                                <div class="input-field col s12 flex">
+                                    <input class="input-modsearch" name="search" id="input-modsearch" type="text"
+                                           th:value="${modsearch}">
+                                    <label for="input-modsearch">Поиск</label>
+                                    <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s1"
+                                            type="submit">Поиск
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th>Тип</th>
+                        <th>Пользователь</th>
+                        <th>Статус</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr class="opacity-50 hover:opacity-100" th:each="element: ${requestMRG}">
+                        <td><a class="font-bold block"></a>Модерация</td>
+
+                        <td><a class="hover:underline block"
+                               th:text="${element.getUser().login}"></a></td>
+                        <td>
+                            <a class="hover:underline block" th:if="not ${element.getClosed()}">На рассмотрении</a>
+                            <a class="hover:underline block" th:if="${element.getClosed()}">Закрыто</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
 </div>
 </body>
 </html>

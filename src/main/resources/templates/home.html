@@ -3,27 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Главная</title>
-
-    <style>
-        .input-field input:focus {
-            border-bottom: 1px solid violet !important;
-            box-shadow: 0 1px 0 0 violet !important;
-            color: white !important;
-        }
-
-        .input-field input:focus + label {
-            color: white !important;
-        }
-
-        ul.dropdown-content.select-dropdown li span {
-            background: #1A1B1C;
-            color: white;
-        }
-
-        ul.dropdown-content.select-dropdown li span:hover {
-            background: rgb(115 115 115);
-        }
-    </style>
 </head>
 
 <div th:insert="fragments/header :: header"></div>
@@ -51,7 +30,9 @@
                                         <option value="Прочее" th:selected="(${type} == 'Прочее')">Прочее</option>
                                     </select>
                                 </div>
-                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s3" type="submit">Поиск</button>
+                                <button class="waves-effect waves-light text-white bg-neutral-800 hover:bg-neutral-500 hover:bg-opacity-50 focus:bg-neutral-500 focus:bg-opacity-50 focus:text-white rounded col s3"
+                                        type="submit">Поиск
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -67,24 +48,23 @@
             </thead>
 
             <tbody th:if="${not goodsList.isEmpty()}">
-            <div th:each="goods: ${goodsList}">
-                <a href="#">
-                    <div>
-                        <tr class="opacity-50 hover:opacity-100">
-                            <td><a class="font-bold h-full w-full" th:href="'item/' + ${goods.getIdGoods()}"
-                                   th:text="${goods.getType().getTypeName()}"></a></td>
+            <tr class="opacity-50 hover:opacity-100 cursor-pointer" th:each="goods: ${goodsList}">
+                <td><a class="font-bold block"
+                       th:href="'item/' + ${goods.getIdGoods()}"
+                       th:text="${goods.getType().getTypeName()}"></a></td>
 
-                            <td><a class="hover:underline" th:href="'item/' + ${goods.getIdGoods()}"
-                                   th:text="${goods.getGoodsName()}"></a></td>
+                <td><a class="block" style="word-break: break-all"
+                       th:href="'item/' + ${goods.getIdGoods()}"
+                       th:text="${goods.getGoodsName()}"></a></td>
 
-                            <td><a class="hover:underline" th:text="${goods.getSeller().getLogin()}"
-                                   th:href="'profile/' +${goods.getSeller().getIdUser()}"></a></td>
+                <td><a class="hover:underline block" style="word-break: break-all"
+                       th:text="${goods.getSeller().getLogin()}"
+                       th:href="'profile/' +${goods.getSeller().getIdUser()}"></a></td>
 
-                            <td th:text="${goods.getGoodsCost()} + '₽'"></td>
-                        </tr>
-                    </div>
-                </a>
-            </div>
+                <td><a class="block" style="word-break: break-all"
+                       th:href="'buy/item/' + ${goods.getIdGoods()}"
+                       th:text="${goods.getGoodsCost()} + '₽'"></a></td>
+            </tr>
             </tbody>
 
             <tbody th:if="${goodsList.isEmpty()}">

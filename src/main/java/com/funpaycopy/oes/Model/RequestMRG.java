@@ -23,13 +23,17 @@ public class RequestMRG {
     @ManyToOne(cascade = CascadeType.MERGE)
     private User user;
 
+    private Boolean closed;
+
     public RequestMRG() {
     }
 
-    public RequestMRG(String requestMRGDesc, User user) {
+    public RequestMRG(String requestMRGDesc, User user, Boolean closed) {
         this.requestMRGDesc = requestMRGDesc;
         this.user = user;
+        this.closed = closed;
     }
+
 
     public long getIdRequestMRG() {
         return idRequestMRG;
@@ -53,5 +57,13 @@ public class RequestMRG {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
     }
 }

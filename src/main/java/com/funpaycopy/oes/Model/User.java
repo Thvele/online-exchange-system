@@ -33,7 +33,6 @@ public class User {
 
 
     @Digits(integer = 6, fraction = 2)
-    @DecimalMin(value = "0.00")
     private BigDecimal balance;
 
     private Boolean active;
