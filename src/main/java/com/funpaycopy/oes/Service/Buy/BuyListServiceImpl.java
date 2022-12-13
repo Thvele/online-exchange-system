@@ -27,7 +27,7 @@ public class BuyListServiceImpl implements BuyListService{
         BuyList buy_ = new BuyList();
         BeanUtils.copyProperties(buy, buy_);
         buyListRepository.save(buy_);
-        return buy_;
+        return buyListRepository.findById(buy_.getIdBuy()).orElseThrow();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class BuyListServiceImpl implements BuyListService{
         buy_.setRequestTS(buy.getRequestTS());
 
         buyListRepository.save(buy_);
-        return buy_;
+        return buyListRepository.findById(buy_.getIdBuy()).orElseThrow();
     }
 
 

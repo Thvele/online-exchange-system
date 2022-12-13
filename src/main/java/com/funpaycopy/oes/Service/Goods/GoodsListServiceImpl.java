@@ -27,11 +27,11 @@ public class GoodsListServiceImpl implements GoodsListService{
     @Override
     public GoodsList saveGoods(GoodsList goodsList, Long sID) {
 
-        GoodsList goodsList_ = new GoodsList();
-        BeanUtils.copyProperties(goodsList, goodsList_);
-        goodsList_.setSeller(userRepository.findById(sID).orElseThrow());
-        goodsListRepository.save(goodsList_);
-        return goodsList;
+        GoodsList goods_ = new GoodsList();
+        BeanUtils.copyProperties(goodsList, goods_);
+        goods_.setSeller(userRepository.findById(sID).orElseThrow());
+        goodsListRepository.save(goods_);
+        return goodsListRepository.findById(goods_.getIdGoods()).orElseThrow();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class GoodsListServiceImpl implements GoodsListService{
         goods_.setSeller(goods.getSeller());
 
         goodsListRepository.save(goods_);
-        return goods_;
+        return goodsListRepository.findById(goods_.getIdGoods()).orElseThrow();
     }
 
 

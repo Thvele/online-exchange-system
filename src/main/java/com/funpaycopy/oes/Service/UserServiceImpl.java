@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService{
         User user1 = new User();
         BeanUtils.copyProperties(user, user1);
         userRepository.save(user1);
-        return user1;
+        return userRepository.findByLogin(user1.getLogin());
     }
 
     @Override
@@ -44,6 +44,12 @@ public class UserServiceImpl implements UserService{
 
         userRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public void deleteUser_(Long id) {
+
+        userRepository.deleteById(id);
     }
 
     @Override
@@ -72,6 +78,25 @@ public class UserServiceImpl implements UserService{
         upd_user.setRequestMRGCollection(user.getRequestMRGCollection());
 
         userRepository.save(upd_user);
-        return upd_user;
+        return userRepository.findByLogin(upd_user.getLogin());
+    }
+
+    @Override
+    public void update(Long id, User user) {
+
+        User upd_user = userRepository.findById(id).orElseThrow();
+
+        upd_user.setLogin(user.getLogin());
+        upd_user.setPassword(user.getPassword());
+        upd_user.setBalance(user.getBalance());
+        upd_user.setEmail(user.getEmail());
+        upd_user.setActive(user.getActive());
+        upd_user.setRoles(user.getRoles());
+        upd_user.setGoods(user.getGoods());
+        upd_user.setBuys(user.getBuys());
+        upd_user.setRequestTSCollection(user.getRequestTSCollection());
+        upd_user.setRequestMRGCollection(user.getRequestMRGCollection());
+
+        userRepository.save(upd_user);
     }
 }

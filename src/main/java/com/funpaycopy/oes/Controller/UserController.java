@@ -4,7 +4,9 @@ import com.funpaycopy.oes.Model.User;
 import com.funpaycopy.oes.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +22,15 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public User saveUser(@RequestBody User user){
+    public ResponseEntity<User> saveUser(@RequestBody User user){
 
-        return userService.saveUser(user);
+        userService.saveUser(user);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .buildAndExpand(user.getIdUser())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/users")
@@ -56,7 +64,8 @@ public class UserController {
     public ResponseEntity<User> updateUser(@PathVariable("id") Long id,
                                            @RequestBody User user) {
 
-        user = userService.updateUser(id, user);
-        return ResponseEntity.ok(user);
+        userService.updateUser(id, user);
+        User user_ = userService.getUserById(id);
+        return ResponseEntity.ok(user_);
     }
 }

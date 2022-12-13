@@ -36,7 +36,7 @@ public class RequestServiceImpl implements RequestService{
         RequestTS requestTS_ = new RequestTS();
         BeanUtils.copyProperties(requestTS, requestTS_);
         requestTSRepository.save(requestTS_);
-        return requestTS_;
+        return requestTSRepository.findById(requestTS_.getIdRequestTS()).orElseThrow();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class RequestServiceImpl implements RequestService{
         RequestMRG requestMRG_ = new RequestMRG();
         BeanUtils.copyProperties(requestMRG, requestMRG_);
         requestMRGRepository.save(requestMRG_);
-        return requestMRG_;
+        return requestMRGRepository.findById(requestMRG_.getIdRequestMRG()).orElseThrow();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class RequestServiceImpl implements RequestService{
         requestTS_.setBuy(requestTS.getBuy());
 
         requestTSRepository.save(requestTS_);
-        return requestTS_;
+        return requestTSRepository.findById(requestTS_.getIdRequestTS()).orElseThrow();
     }
 
     @Override
@@ -99,6 +99,6 @@ public class RequestServiceImpl implements RequestService{
         requestMRG_.setClosed(requestMRG.getClosed());
 
         requestMRGRepository.save(requestMRG_);
-        return requestMRG_;
+        return requestMRGRepository.findById(requestMRG_.getIdRequestMRG()).orElseThrow();
     }
 }

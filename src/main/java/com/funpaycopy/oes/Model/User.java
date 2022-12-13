@@ -83,6 +83,16 @@ public class User {
         this.requestMRGCollection = requestMRGCollection;
     }
 
+    public User(long idUser, String login, String password, String email, BigDecimal balance, Boolean active, String profilePhoto) {
+        this.idUser = idUser;
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.balance = balance;
+        this.active = active;
+        this.profilePhoto = profilePhoto;
+    }
+
     public long getIdUser() {
         return idUser;
     }
