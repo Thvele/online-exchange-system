@@ -207,8 +207,13 @@ public class HomeController {
 
         GetCookies(response, principal);
 
+        User user = new User();
+
         GoodsList goods = goodsListRepository.findById(id).orElseThrow();
-        User user = userRepository.findByLoginAndActive(principal.getName(), true);
+
+        try {
+            user = userRepository.findByLoginAndActive(principal.getName(), true);
+        } catch (Exception e) {}
 
         model.addAttribute("goods", goods);
         model.addAttribute("balance", user.getBalance());
@@ -381,6 +386,7 @@ public class HomeController {
 
         requestMRG.setUser(user);
         requestMRG.setRequestMRGDesc(desc);
+        requestMRG.setClosed(false);
 
         requestMRGRepository.save(requestMRG);
         return ("redirect:/rights");

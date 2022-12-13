@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Товар</title>
@@ -31,7 +31,7 @@
                     <p class="font-bold text-2xl">Описание: </p>
                     <span style="white-space: pre-line" th:text="${goods.goodsDesc}"></span>
                 </div>
-                <div class="card-action" style="height: 10%" th:if="not (${goods.seller.getLogin()} == ${login})">
+                <div class="card-action" style="height: 10%" th:if="not (${goods.seller.getLogin()} == ${login})" sec:authorize="isAuthenticated()">
                     <span disabled th:text="'Цена: ' + ${goods.goodsCost} + '₽'" class="text-white mr-3 text-xl"></span>
                     <a th:if="(${goods.getGoodsCost()} > ${balance})"
                        class="disabled waves-effect waves-orange btn-large bg-white text-black hover:bg-yellow-400 hover:text-black focus:bg-yellow-400 focus:text-black modal-trigger"
